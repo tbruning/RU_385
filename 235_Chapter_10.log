@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99992 (TeX Live 2015/Debian) (preloaded format=xelatex 2017.8.22)  3 FEB 2018 12:31
+This is XeTeX, Version 3.14159265-2.6-0.99992 (TeX Live 2015/Debian) (preloaded format=xelatex 2017.8.22)  3 FEB 2018 12:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1026,20 +1026,20 @@ t/10.95 unknown and assumed
 *************************************************
 * fontspec warning: "addfontfeatures-ignored"
 * 
-* \addfontfeature(s) ignored on line 248; it cannot be used with a font that
+* \addfontfeature(s) ignored on line 250; it cannot be used with a font that
 * wasn't selected by a fontspec command.
 * 
 * The current font is "\EU1/lmr/m/n/10 ".
 * The requested feature is "LetterSpace=10".
 *************************************************
 [2]
-Overfull \hbox (9.12636pt too wide) in paragraph at lines 275--277
+Overfull \hbox (9.12636pt too wide) in paragraph at lines 277--279
 \EU1/lmr/m/n/10 Since we rejected $\OML/cmm/m/it/10 H[]$ \EU1/lmr/m/n/10 can we
  be 95% confident that $\OML/cmm/m/it/10 ^^V[] > ^^V[]$\EU1/lmr/m/n/10 ?  
  []
 
 
-Overfull \hbox (18.92195pt too wide) in paragraph at lines 280--281
+Overfull \hbox (18.92195pt too wide) in paragraph at lines 282--283
 []$\OT1/cmr/m/n/10 ([] \OMS/cmsy/m/n/10 ^^@ []\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/1
 0 ^^F \OML/cmm/m/it/10 t[][] \OT1/cmr/m/n/10 = (3\OML/cmm/m/it/10 :\OT1/cmr/m/n
 /10 27 \OMS/cmsy/m/n/10 ^^@ \OT1/cmr/m/n/10 2\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 
@@ -1052,22 +1052,22 @@ Package bibentry Warning: You have used \nobibliography*
 (bibentry)                without a following \bibliography.
 (bibentry)                You may not be able to run BibTeX.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 287.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 289.
 *************************************************
 * fontspec warning: "addfontfeatures-ignored"
 * 
-* \addfontfeature(s) ignored on line 287; it cannot be used with a font that
+* \addfontfeature(s) ignored on line 289; it cannot be used with a font that
 * wasn't selected by a fontspec command.
 * 
 * The current font is "\EU1/lmr/m/n/10 ".
 * The requested feature is "LetterSpace=10".
 *************************************************
 [3]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 287.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 289.
 (./235_Chapter_10.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 287.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 287.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 287.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 289.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 289.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 289.
  ) 
 Here is how much of TeX's memory you used:
  24835 strings out of 495579
@@ -1076,6 +1076,6 @@ Here is how much of TeX's memory you used:
  27823 multiletter control sequences out of 15000+600000
  10894 words of font info for 59 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 63i,12n,46p,10409b,430s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 63i,12n,46p,10409b,424s stack positions out of 5000i,500n,10000p,200000b,80000s
 
 Output written on 235_Chapter_10.pdf (3 pages).
