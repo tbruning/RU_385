@@ -13,8 +13,5 @@
 vignettes/*.html
 vignettes/*.pdf
 .Rproj.user
-*Chapter*.pdf
-*Chapter*.Rmd
-*Chapter*.rmd
 # test files
 test*.*
