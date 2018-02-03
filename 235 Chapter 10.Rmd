@@ -1,0 +1,169 @@
+---
+title: "Chapter 10-1"
+subtitle: "An implementation in R Markdown"
+author: "Tom Bruning"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+library(tufte)
+require(dplyr)
+require(tidyr)
+require(ggplot2)
+require(ggthemes)
+require(knitr)
+require(tibble)
+
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
+options(htmltools.dir.version = FALSE)
+```
+## 6 Steps in Hypothesis Testing (Review)
+
+
+- Planning the test
+    1. State the null hypothesis, $H_0$ and the alternative hypothesis, $H_1$  
+    2. Choose the level of significance, $\alpha$, and the sample size, $n$  
+    3. Determine the appropriate test statistic and sampling distribution  
+    4. Determine the critical values that divide the rejection and nonrejection regions  
+     
+- Run the test  
+    5. Collect data and compute the value of the test statistic  
+    6. Make the statistical decision and state the managerial conclusion.  If the test statistic falls into the nonrejection region, do not reject the null hypothesis H0. If the test statistic falls into the rejection region, reject the null hypothesis.  Express the managerial conclusion in the context of the problem.
+
+
+# Two Sample Tests  
+
+
+**Goal:**  Test hypothesis or form a confidence interval for the difference between two population means,  $\mu_1 – \mu_2$  
+
+- The point estimate for the difference is:  $\bar{X}_1 – \bar{X}_2$  
+
+## Difference Between Two Means: Independent Samples  
+
+
+- Different data sources  
+    - Unrelated  
+    - Independent  
+    
+Sample selected from one population has no effect on the sample selected from the other population.
+
+
+Population means, independent samples
+
+
+## Hypothesis Tests for Two Population Means
+
+Two Population Means, Independent Samples  
+
+- Lower-tail test:  
+
+  $H_0: \mu_1 \ge \mu_2$  
+  $H_1: \mu_11 < \mu_2$  
+
+i.e.,
+
+  $H_0: \mu_1 – \mu_2 \ge 0$  
+  $H_1: \mu_1 – \mu_2 < 0$  
+  So: Reject $H_0$  if  $t_{STAT} < -t_a$
+
+- Upper-tail test:  
+
+  $H_0: \mu_1 \le \mu_2$  
+  $H_1: \mu_11 > \mu_2$  
+
+i.e.,
+
+  $H_0: \mu_1 – \mu_2 \le 0$  
+  $H_1: \mu_1 – \mu_2 > 0$ 
+  So: Reject $H_0$  if  $t_{STAT} > t_a$
+
+- Two-tail test:
+
+  $H_0: \mu_1 = \mu_2$  
+  $H_1: \mu_11 \ne  \mu_2$  
+
+i.e.,
+
+  $H_0: \mu_1 – \mu_2 = 0$  
+  $H_1: \mu_1 – \mu_2 \ne 0$  
+  So: Reject $H_0$  if  $t_{STAT} < -t_{\alpha/2}$ or $t_{STAT} > t_{\alpha/2}$  
+  
+## Hypothesis tests for $\mu_1$ - $\mu_2$ with $\sigma_1$ and $\sigma_2$ unknown and assumed equal
+
+Assumptions:    
+
+- Samples are randomly and independently drawn  
+
+- Populations are normally distributed or both sample sizes are at least 30  
+
+- Population variances are unknown but assumed equal  
+
+
+  The pooled variance is:
+
+$S^2_p = \frac{(n_1 -1)S^2_1+(n_2 -1)S^2_2 }{(n_1-1) + (n_2 - 1) }$
+
+  The test statistic is:
+
+$t_{stat}= \frac{(\bar{X}_1 - \bar{X}_2) - (\mu_1=\mu_2)}  {\sqrt{S^2_p(\frac{1}{n_1}+\frac{1}{n_2})}}$
+
+
+
+
+  Where  $t_STAT$  has d.f. = $(n_1 + n_2 – 2)$
+
+## Pooled-Variance t Test Example
+
+You are a financial analyst for a brokerage firm.  Is there a difference in dividend yield between stocks listed on the NYSE & NASDAQ?  You collect the following data:  
+```{r, echo=FALSE}
+a <- tibble(c("Number", "Sample mean", "Sample std dev"))
+b <- tibble(c(21,3.27,1.30))
+c <- tibble(c(25, 2.53,1.16))
+d <- bind_cols(a,b,c)
+kable(d, col.names = c(" ","NYSE","NASDAQ"))
+```
+
+
+Assuming both populations are approximately normal with equal variances, is there a difference in mean yield ($\alpha = 0.05$)?
+
+$H_0: \mu_1 - \mu_2 = 0\ \   i.e.\ \  (\mu_1 = \mu_2)$  
+$H_1: \mu_1 - \mu_2 \ne 0\ \   i.e.\ \  (\mu_1 \ne \mu_2)$  
+
+$S^2_p = \frac{(n_1 -1)S^2_1+(n_2 -1)S^2_2 }{(n_1-1) + (n_2 - 1) } = \frac{(21 -1)1.30^2+(25 -1)1.16^2}{(21-1) + (25- 1)}=1.5021$
+
+$t_{stat}= \frac{(\bar{X}_1 - (\bar{X}_2) - (\mu_1=\mu_2}  {\sqrt{S^2_p(\frac{1}{n_1}+\frac{1}{n_2})}}= \frac{(3.27 - 2.53) - 0}  {\sqrt{1.5021(\frac{1}{21}+\frac{1}{25})}} = 2.040$  
+Note: You assume $\mu_1- \mu_2 = 0$ since you are trying to reject $H_0$
+
+$\alpha$ = 0.05
+df = 21 + 25 - 2 = 44
+Critical Values: $t = \pm 2.0154$ (from the student t table)
+
+Test Statistic = 2.040
+
+Decision: Reject $H_0\ \  at\ \  \alpha = 0.05$
+
+Conclusion: There is evidence of a difference in means.
+
+## Pooled-Variance t Test Example:  Confidence Interval for $\mu_1 - \mu_2$  
+
+Since we rejected $H_0$ can we be 95% confident that $\mu_{NYSE} > \mu_{NASDAQ}$?
+
+95% Confidence Interval for $\mu_{NYSE} - \mu_{NASDAQ}$
+
+$(\bar{X}_1- \bar{X}_2) \pm t_{\alpha/2} \sqrt{S^2_p(\frac{1}{{n_1}}+\frac{1}{n_2})} = (3.27- 2.53 ) \pm 2.0154 \sqrt{1.5021(\frac{1}{{21}}+\frac{1}{25})}= 0.74 \pm 2.0154(0.3628)= (0.009, 1.471)$
+
+
+Since 0 is less than the entire interval, we can be 95% confident that $\mu_{NYSE} > \mu_{NASDAQ}$
+
+
+
+
+

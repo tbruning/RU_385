@@ -1,0 +1,475 @@
+---
+title: "Continuous Distributions"
+author: "Tom Bruning"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+library(tufte)
+library(ggplot2)
+library(ggthemes)
+library(tidyr)
+library(dplyr)
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
+options(htmltools.dir.version = FALSE)
+```
+
+
+# Introduction
+
+`r newthought('This class is a review')` of continuous distributions.  The normal distribution is the backbone of the material in this course, and without a solid understanding of normal distributions this material will be a real slough.
+
+* A continuous random variable is a variable that can assume any value on a continuum (can assume an uncountable number of values)  
+* These can potentially take on any value depending only on the ability to precisely and accurately measure
+
+
+## Normal Distribution
+
+The normal distribution is characterized by it being:  
+
+* Bell Shaped
+* Symmetrical    
+* Mean, Median and Mode are Equal   
+```{r nrml, echo=FALSE, fig.margin=TRUE, fig.cap="Generic Normal Distribution"}
+mean=100; sd=15
+lb=80; ub=120
+mu <- expression(paste(mu))
+Mean <- seq(-4,4,length=100)*sd + mean
+hx <- dnorm(Mean,mean,sd)
+d <- data.frame(Mean,hx)
+ggplot(d) + geom_line(aes(x=Mean, y = hx), color="blue") + theme_tufte() + geom_rangeframe() + ylab("") + geom_vline(xintercept = mean) + xlab(mu) +
+  theme( axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+  * The Location is determined by the mean, $\mu$   
+  * The Spread is determined by the standard deviation, $\sigma$   
+  * The random variable has an infinite theoretical range: $-\infty \rightarrow +\infty$
+
+## Varying the parameters $\mu$ and $\sigma$
+
+In Figure 2, we obtain different normal distributions
+```{r nrml2, echo=FALSE, fig.margin=TRUE, fig.cap="Comparing means and standard deviations"}
+mean=100; sd=15
+type=rep(1,100)
+Mean <- seq(-4,4,length=100)*sd + mean
+hx <- dnorm(Mean,mean,sd)
+d <- data.frame(Mean,hx,type)
+sd2 <- 20
+mean2 <- 100
+type <- rep(2,100)
+Mean <- seq(-4,4,length=100)*sd2 + mean2
+hx <- dnorm(Mean,mean2,sd2)
+d2 <- data.frame(Mean,hx,type)
+mean3 <- 130
+sd3 <- 30
+type <- rep(3,100)
+Mean <- seq(-4,4,length=100)*sd3 + mean3
+hx <- dnorm(Mean,mean3,sd3)
+d3 <- data.frame(Mean,hx,type)
+d <- bind_rows(d,d2,d3)
+
+d <- bind_rows(d,d2)
+
+
+d$type <- as.factor(d$type)
+ggplot(d) + geom_line(aes(x=Mean, y = hx,colour=type, group=type)) + theme_tufte() + ylab("") +  xlab(" ") +
+  theme( axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+```
+* type 1 and type 2 have the same means and different standard deviations and   
+* type 2 and type 3 have different means and different standard deviations
+
+Changing $\mu$ shifts the distribution left or right.  
+Changing $\sigma$ increases or decreases the spread.
+
+## The Standardized Normal
+Any normal distribution (with any mean and standard deviation combination) can be transformed into the standardized normal distribution (Z)
+
+To compute normal probabilities we need to transform $X$ units into $Z$ units. The standardized normal distribution (Z) always has a mean of 0 and a standard deviation of 1.
+\begin{equation}
+Z = \frac{X - \mu}{\sigma}
+\end{equation}
+To translate from X to the standardized normal (the “Z” distribution) we subtract the mean of X and dividing by its
+standard deviation.  The Z distribution always has mean = 0 and standard deviation = 1.
+
+For example: If X is distributed normally with mean of \$100 and standard deviation of \$50, the $Z$ value for $X$ = $200  is:   
+\begin{equation}
+Z = \frac{200 - 100}{50} = 2
+\end{equation}
+
+This says that  X = \$200  is two standard deviations (2 increments of \$50 units) above the mean of \$100.
+
+## Empirical Rule
+
+The emperical rule states:   
+
+* $\mu \pm$ 1$\sigma$ covers about 68.26% of X's  
+* $\mu \pm$ 2$\sigma$ covers about 95.44% of X's  
+* $\mu \pm$ 3$\sigma$ covers about 99,73% of X's 
+
+## Evaluating Normality
+
+* Not all continuous distributions are normal
+* It is important to evaluate how well the data set is approximated by a normal distribution.
+* Normally distributed data should approximate the theoretical normal distribution:  
+* The normal distribution is bell shaped (symmetrical) where  
+
+    * the mean is equal to the median.
+    * The empirical rule applies to the normal distribution.
+    * The interquartile range of a normal distribution is 1.33 standard deviations.
+
+## Comparing data characteristics to theoretical properties
+
+Construct charts or graphs  
+
+* For small- or moderate-sized data sets, construct a stem-and-leaf display or a boxplot to check for symmetry  
+* For large data sets, does the histogram or polygon appear bell-shaped?      
+
+Compute descriptive summary measures   
+* Do the mean, median and mode have similar values?   
+* Is the interquartile range approximately 1.33σ?   
+* Is the range approximately 6$\sigma$?
+
+Comparing data characteristics to theoretical properties  
+
+* Observe the distribution of the data set  
+    * Do approximately 2/3 of the observations lie within mean $\pm$ 1 standard deviation?  
+    * Do approximately 80% of the observations lie within mean $\pm$ 1.28 standard deviations? 
+    * Do approximately 95% of the observations lie within mean $\pm$ 2 standard deviations?  
+* Evaluate normal probability plot
+    * Is the normal probability plot approximately linear (i.e. a straight line) with positive slope?
+    
+# Uniform Distribution
+
+* The uniform distribution is a probability distribution that has equal probabilities for all possible outcomes of the random variable
+
+* Also called a rectangular distribution
+```{r unif, echo=FALSE, fig.margin=TRUE, fig.cap="Uniform Distribution from 50 to 150"}
+ggplot() +
+  geom_rect(aes(xmin=50, ymin=0, xmax=150, ymax=450), colour="red",fill="white") + xlim(0,200) + ylim(0,500) + 
+  geom_rangeframe() + theme_tufte() +
+  
+  theme(axis.title.x = element_text(vjust=-0.5), axis.title.y = element_text(vjust=1.5))
+# +
+#   theme(axis.text.y=element_blank(),
+#         axis.ticks.y=element_blank())
+```
+
+The chart on the right is a uniform distribution with $\mu$ = 100, minimum value is 50, and maximum value of 150.
+
+# Bayes Theorem
+
+Why This Is Important?
+
+Suppose:
+
+* You believe something is true, (~100% sure)  
+* And then some event happens which might make you think the original statement isn’t true,   
+* How does this subsequent event affect your original belief?    
+Now you might be less than 100% sure.  
+
+
+Bayes Theorem quantifies this type problem using conditional probabilities.
+
+\begin{equation}
+P(A|B) = \frac{P(B|A) P(A)}{P(B)}
+\end{equation}
+where A and B are events and P(B) $\ne$ 0.  
+
+* P(A) and P(B) are the probabilities of observing A and B without regard to each other.  
+* P(A | B), a conditional probability, is the probability of observing event A given that B is true.  
+* P(B | A) is the probability of observing event B given that A is true.  
+* P(A) is the prior probability (before Event B occurs), also called the baseline  
+* P(A|B) is the posterior probability (after Event B occurs), and can also the used as a new prior probability as subsequent Event Bs occur
+
+## Bayes Theorem Example 1  
+
+```{marginfigure}
+$P(A|B) = \frac{P(B|A) P(A)}{P(B)}$
+```
+
+* Event A = Patient has the disease   
+* Event B = Test for the disease   
+* There is a disease that affects 0.1% of the population:  P(A) = .001   
+* There is a test that  
+     - correctly identifies 100% of infected people as infected, and = P(B|A) called the *sensivity* or true positive rate  
+    - correctly identifies 95% of uninfected people as uninfected = P( not B | not A) $P(\neg B | \neg A)$  called the *specificity* or true negative rate  
+    
+Question: What is the probability that someone whom the test identifies as having the disease actually has the disease?  
+
+## Bayes Theorem Example 2
+Suppose 3 stockbrokers are sitting in a Starbucks discussing the stock market.   
+
+* Jan feels that the we are in a bull market (99% sure of bull market)  
+* Chris feels that we are in a bear market, and (1% sure of bull market)  
+* Pat isn’t sure what type of market we are in (50% sure of bull market)  
+
+How accurate their reading of the market is will affect their recommendations to their clients.   
+
+
+```{r nrml3, echo=FALSE, warning=FALSE, message=FALSE, fig.margin= TRUE}
+bayes <- function(prior, hypo_true, hypo_false, rnd=3) {
+    post <- (prior * hypo_true)/ ((prior * hypo_true) + hypo_false * (1-prior))
+  #  print(round(post, rnd))
+}
+## prior is the base rate
+## cond_probability is how likely is an event given that something related has occured. The opposite of the posteriori
+## likely is 
+## End of Bayes function ##############
+require(dplyr)
+require(ggplot2)
+require(ggthemes)
+require(tidyr)
+par(mfrow=c(1,3), las=1)
+set.seed(43)
+x <- c(1,1,1,1,1,1,-1,-1,-1,-1)
+cum_01 <- as.numeric(data.frame())
+cum_50 <- as.numeric(data.frame())
+cum_99 <- as.numeric(data.frame())
+prior_01 <- .01
+prior_50 <- .5
+prior_99 <- .99
+cum_01[1] <- prior_01
+cum_50[1] <- prior_50
+cum_99[1] <- prior_99
+for(i in 1:26) {
+    s <- sample(x, 1, replace = TRUE)
+    if(s > 0) {
+        hypo_true <- .75
+        hypo_false <- .25
+        
+    } else {
+        hypo_true <- .25
+        hypo_false <- .75
+        
+    }
+    z_01 <- bayes(cum_01[i], hypo_true,hypo_false, rnd = 5)
+    if(z_01 > .999){
+        z_01 <- .999
+    }
+    cum_01[i+1] <-  z_01
+    z_50 <- bayes(cum_50[i], hypo_true,hypo_false, rnd = 5)
+    if(z_50 > .999){
+        z_50 <- .999
+    }
+    cum_50[i+1] <-  z_50
+    z_99 <- bayes(cum_99[i], hypo_true,hypo_false, rnd = 5)
+    if(z_99 > .999){
+        z_99 <- .999
+    }
+    cum_99[i+1] <-  z_99
+    
+    
+}
+w <- c(0:26)
+# prio_01 <-c(rep(1,27))
+w <- as.data.frame(w)
+cum_01 <- as.data.frame(cum_01)
+prio_01 <- as.data.frame(c(rep(1,27)))
+# prio_50 <-c(rep(2,27))
+cum_50 <- as.data.frame(cum_50)
+prio_50 <- as.data.frame(c(rep(2,27)))
+# prio_99 <-c(rep(3,27))
+cum_99 <- as.data.frame(cum_99)
+prio_99 <- as.data.frame(c(rep(3,27)))
+final_cumcum  <- bind_cols(w,prio_01,cum_01, prio_50, cum_50, prio_99, cum_99)
+x1 <- rep("01", 27)
+x50 <- rep("50", 27)
+x99 <- rep("99", 27)
+x1 <- as.data.frame(x1)
+x50 <- as.data.frame(x50)
+x99 <- as.data.frame(x99)
+cum01 <- bind_cols(w, x1, cum_01)
+cum50 <- bind_cols(w, x50, cum_50)
+cum99 <- bind_cols(w, x99, cum_99)
+
+
+colnames(cum01) <- c("Week", "Prior", "pct")
+colnames(cum50) <- c("Week", "Prior", "pct")
+colnames(cum99) <- c("Week", "Prior", "pct")
+finalcum <- bind_rows(cum01, cum50, cum99)
+finalcum <- mutate(finalcum, Pct = round(pct * 100, 0))
+p1 <- ggplot(data = finalcum) + aes(x=Week, y = Pct, group = Prior, colour = Prior) + geom_line(aes(linetype=Prior)) + geom_point() +
+    xlab("Week") + ylab("Pct Belief\n in Bull Mkt.") +
+    ggtitle("Bayesian Revision\n of Belief of Bull Market\n (Bull Market)") + theme_tufte()
+
+
+
+####################################################
+## Bear Market
+#################################################3#3
+set.seed(43)
+x <- c(-1,-1,-1,-1,-1,-1,1,1,1,1)
+cum_01 <- as.numeric(data.frame())
+cum_50 <- as.numeric(data.frame())
+cum_99 <- as.numeric(data.frame())
+prior_01 <- .01
+prior_50 <- .5
+prior_99 <- .99
+cum_01[1] <- prior_01
+cum_50[1] <- prior_50
+cum_99[1] <- prior_99
+for(i in 1:26) {
+    s <- sample(x, 1, replace = TRUE)
+    if(s > 0) {
+        hypo_true <- .75
+        hypo_false <- .25
+        
+    } else {
+        hypo_true <- .25
+        hypo_false <- .75
+        
+    }
+    z_01 <- bayes(cum_01[i], hypo_true,hypo_false, rnd = 5)
+    if(z_01 < .001){
+        z_01 <- .001
+    }
+    cum_01[i+1] <-  z_01
+    z_50 <- bayes(cum_50[i], hypo_true,hypo_false, rnd = 5)
+    if(z_50 < .001){
+        z_50 <- .001
+    }
+    cum_50[i+1] <-  z_50
+    z_99 <- bayes(cum_99[i], hypo_true,hypo_false, rnd = 5)
+    if(z_99 < .001){
+        z_99 <- .001
+    }
+    cum_99[i+1] <-  z_99
+    
+    
+}
+w <- c(0:26)
+prio_01 <-c(rep(1,27))
+w <- as.data.frame(w)
+cum_01 <- as.data.frame(cum_01)
+prio_01 <- as.data.frame(prio_01)
+prio_50 <-c(rep(2,27))
+cum_50 <- as.data.frame(cum_50)
+prio_50 <- as.data.frame(prio_50)
+prio_99 <-c(rep(3,27))
+cum_99 <- as.data.frame(cum_99)
+prio_99 <- as.data.frame(prio_99)
+final_cumcum  <- bind_cols(w,prio_01,cum_01, prio_50, cum_50, prio_99, cum_99)
+x1 <- rep("01", 27)
+x50 <- rep("50", 27)
+x99 <- rep("99", 27)
+x1 <- as.data.frame(x1)
+x50 <- as.data.frame(x50)
+x99 <- as.data.frame(x99)
+cum01 <- bind_cols(w, x1, cum_01)
+cum50 <- bind_cols(w, x50, cum_50)
+cum99 <- bind_cols(w, x99, cum_99)
+
+
+colnames(cum01) <- c("Week", "Prior", "pct")
+colnames(cum50) <- c("Week", "Prior", "pct")
+colnames(cum99) <- c("Week", "Prior", "pct")
+finalcum <- bind_rows(cum01, cum50, cum99)
+finalcum <- mutate(finalcum, Pct = round(pct * 100, 0))
+p2 <- ggplot(data = finalcum) + aes(x=Week, y = Pct, group = Prior, colour = Prior) + geom_line(aes(linetype=Prior)) + geom_point() +
+    xlab("Week") + ylab("Pct Belief\n in Bull Mkt.") +
+    ggtitle("Bayesian Revision\n of Belief of Bull Market\n (Bear Market)") + theme_tufte()
+
+
+## Same Bull market set to .75 up and .25 Down
+set.seed(43)
+x <- c(rep(1, 75), rep(-1, 25))
+cum_01 <- as.numeric(data.frame())
+cum_50 <- as.numeric(data.frame())
+cum_99 <- as.numeric(data.frame())
+prior_01 <- .01
+prior_50 <- .5
+prior_99 <- .99
+cum_01[1] <- prior_01
+cum_50[1] <- prior_50
+cum_99[1] <- prior_99
+for(i in 1:26) {
+    s <- sample(x, 1, replace = TRUE)
+    if(s > 0) {
+        hypo_true <- .7
+        hypo_false <- .2
+        
+    } else {
+        hypo_true <- .2
+        hypo_false <- .7
+        
+    }
+    z_01 <- bayes(cum_01[i], hypo_true,hypo_false, rnd = 5)
+    if(z_01 > .999){
+        z_01 <- .999
+    }
+    cum_01[i+1] <-  z_01
+    z_50 <- bayes(cum_50[i], hypo_true,hypo_false, rnd = 5)
+    if(z_50 > .999){
+        z_50 <- .999
+    }
+    cum_50[i+1] <-  z_50
+    z_99 <- bayes(cum_99[i], hypo_true,hypo_false, rnd = 5)
+    if(z_99 > .999){
+        z_99 <- .999
+    }
+    cum_99[i+1] <-  z_99
+    
+    
+}
+w <- c(0:26)
+prio_01 <-c(rep(1,27))
+w <- as.data.frame(w)
+cum_01 <- as.data.frame(cum_01)
+prio_01 <- as.data.frame(prio_01)
+prio_50 <-c(rep(2,27))
+cum_50 <- as.data.frame(cum_50)
+prio_50 <- as.data.frame(prio_50)
+prio_99 <-c(rep(3,27))
+cum_99 <- as.data.frame(cum_99)
+prio_99 <- as.data.frame(prio_99)
+final_cumcum  <- bind_cols(w,prio_01,cum_01, prio_50, cum_50, prio_99, cum_99)
+x1 <- rep("01", 27)
+x50 <- rep("50", 27)
+x99 <- rep("99", 27)
+x1 <- as.data.frame(x1)
+x50 <- as.data.frame(x50)
+x99 <- as.data.frame(x99)
+cum01 <- bind_cols(w, x1, cum_01)
+cum50 <- bind_cols(w, x50, cum_50)
+cum99 <- bind_cols(w, x99, cum_99)
+
+
+colnames(cum01) <- c("Week", "Prior", "pct")
+colnames(cum50) <- c("Week", "Prior", "pct")
+colnames(cum99) <- c("Week", "Prior", "pct")
+finalcum <- bind_rows(cum01, cum50, cum99)
+finalcum <- mutate(finalcum, Pct = round(pct * 100, 0))
+p3 <- ggplot(data = finalcum) + aes(x=Week, y = Pct, group = Prior, colour = Prior) + geom_line(aes(linetype=Prior)) + geom_point() +
+    xlab("Week") + ylab("Pct Belief\n in Bull Mkt.") +
+    ggtitle("Bayesian Revision\n of Belief of Bull Market\n (Bull Market)") + theme_tufte()
+par(mfrow=c(1,3), las=1)
+p1
+p2
+p3
+
+```
+  
+The three stockbrokers agree to meet at the end of each week, and depending on how the market did that week adjust their views on whether or not we are in a bull market.  They agree that if the market ends the week higher than the previous week that there is a 75% chance we are in a bull market, and if the market is lower there is a 75% chance we are in a bear market.  
+
+Let’s see how their view changes as the weeks go by.
+
+
+* The top chart to the right has the market going up 60% of the time,   * The middle chart has the market going down 60% of the time, and   
+* The bottom chart has the market going up 75% of the time.  
+
+In all three cases the brokers eventually come to agreement on the market trend.  
+
+

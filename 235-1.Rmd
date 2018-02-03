@@ -1,0 +1,151 @@
+---
+title: "Statistical Methods for Decision Making"
+subtitle: "Week I"
+author: "Tom Bruning"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+
+---
+
+```{r setup, include=FALSE}
+library(tufte)
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
+options(htmltools.dir.version = FALSE)
+```
+
+# Introduction   
+
+```{marginfigure}
+**Contact Information**    
+email: tom.bruning@gmail.com   
+cell: 201.204.0585   
+Include RU or *Rutgers* in Subject Line of emails to get prompt response.  
+```
+`r newthought('Most students')` do not appreciate the amount of work that a statistics class entails.  I do not want anyone surprised by what I am asking for you to be responsible for to succeed in this class.  
+`r newthought('Basic groundrules')` for this class are contained in this document.  You are responsible for all that occurs in class, even if you miss the class, and the material in this document, that will be distributed throughout the semester.  All materials will be posted on Blackboard, even material handed out in class.  You are responsible for your own work, the Honor Code will be **strictly** enforced.  
+I will work with each of you to help, where needed, to get you through this class; provided you do the work necessary to get through this class.
+
+## Basics  
+
+`r newthought('Each class will start')` out with a reading assignment (like this) that I will prepare and have available for that class.  Your responsibility is to read the material in the textbook, _before the class_ and be prepared to ask questions and discuss it during the class session.  Statistics is not a **spectator** sport, it is a **participatory** sport.  That means you need to think and work to get the right answer.  Right now answer the question on the right.    
+`r margin_note("A bat and a ball cost \\$1.10.  The bat costs one dollar more than the ball, how much does the ball cost?\\_\\_")`   
+
+## Resources
+
+**Title:** *Basic Business Statistics: Concepts and Applications*  
+**Authors:** Berenson, Levine, Krebbel  
+**Publisher:** Pearson  
+**ISBN-10 0132168383** 
+
+## Assignments
+
+All assignments will be posted in Blackboard in the Course Documents section.  Copies of slides and this handout, homeworks, and all other material will be avaiable in this section on Blackboard. **You** are resposible being up to date on all the material on Blackboard.  I will cover the material in class **after** you have read it.  I will also post the instructor slides that come with the book.  I will not be going through the slides in class.  (It is boring for you, and not particularly fun for me)
+You are responsible for the reading material from the text book each week.  If there is not enough class participation, or if you are not reading ahead, we will have a quiz at the beginning of each class, then have the reading assignment.  *Your choice*.   
+Other assignments are due on the **Due Date**.  If you are unable to attend class that evening, they MUST be emailed to me by the start of class.  
+
+## Grading   
+
+Table 1 shows the fraction each class activity contributes to your final grade.  
+
+```{r, fig-margin1, fig.margin = TRUE,echo=FALSE, warning=FALSE, message=FALSE}
+grading <- read.csv("./235_grading.csv")
+knitr::kable(grading, caption = "Grade Weights and Due Dates")  
+```
+
+
+
+
+
+# How To Get The Grade You Want (Or think you deserve)
+`r newthought('My theory')` on how to get the grade you want involves this equation:  
+  
+
+Talent + Hard Work + Luck $\xrightarrow{determines}$ Your Grade.   
+
+
+  
+     
+Let's take each item in turn:  
+   
+  
+* Talent - The ability you have to master the material  
+* Hard Work - The amount of effort needed to get the grade.  This is more than you think!  
+* Luck - In statistics, any continuous variable (in this case your grade) includes a factor called *random noise*.  You cannot control for this, it just happens. You will learn about this during this semester.   
+
+You will notice there is nothing about *extra credit*, *do overs*, or anything else.  The time to start worrying about your grade is **now** while you have an opportunity to affect it.  That means that now is the time to start working on earning the grade you want, not after the midterm, by then you would have created a ceiling that is below what you want.
+
+``
+
+## Principles of Data Analysis ^[[Beautiful Evidence by Edward Tufte](http://www.edwardtufte.com/tufte/books_be)]
+  
+1. **Comparison** - 
+    Show comparisons, contrasts, differences  
+    The basis of data analysis is to show the comparison between two or more items.  Items can be sample means, a sample mean and its specifications, or any other different samples/populations statistics or parameters.
+    
+2. **Causality, Mechanism, Structure, Explanation**  
+    * Why 
+    * What
+    * How    
+    
+    Statistical causality is not a trivial exercise, in fact it is the *Gold Standard* of determining cause and effect, but while correlation is not causation, it can certainly hint at, or point the way to causation.
+3. **Multivariate Analysis**  
+    There is, at a minimum, a dependent and an independent variable to analyze.  Many times, if not most of the time, there are multiple causal factors that affect the dependent variable.  You should account for all of the major factors, not just one.
+4. **Integration of Evidence**  
+    Completely integrate words, numbers, images, diagrams.  Too often the presentation of evidence is not an integrated whole, easy to compare items
+5. **Documentation** - Thoroughly describe the evidence. Provide:  
+    * a detailed title, 
+    * indicate the authors and sponsors,
+    * document the data sources 
+    * show complete measurement scales
+    * point out relevant issues 
+    
+6. **Content Counts Most of All**  Analytical presentations ultimately stand or fall depending on the quality, relevance and integrity of their contents. *Information is the interface*. Frills and chartjunk distracts from the information. Don't distract the reader away from the data.
+
+## Comparison  
+
+Below is a table of summary variables from 13 datasets that have a series of x,y pairs of data.  The table elements are:  
+
+* Mean(x),
+* Mean(y),
+* Standard Deviation(x),
+* Standard Deviation(y), and
+* Correlation between x and y pairs   
+
+Comparing the 13 data sets what can you tell me about the differences/similaries of these summary statistics?
+
+
+
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+library(knitr)
+library(ggplot2)
+library(datasauRus)
+library(dplyr)
+library(tidyr)
+library(tibble)
+dt <- as_tibble(datasaurus_dozen)
+dt_grp <- group_by(datasaurus_dozen,dataset)
+dt_meanx <- summarize(dt_grp,mx=mean(x))
+dt_meany <- summarize(dt_grp,my=mean(y))
+dt_sdx <- summarize(dt_grp,sdx=sd(x))
+dt_sdy <- summarize(dt_grp,sdy=sd(y))
+dt_corr <- summarize(dt_grp,cor=cor(x,y))
+dt_meanx$mx <- round(dt_meanx$mx,2)
+dt_meany$my <- round(dt_meany$my,2)
+dt_sdx$sdx <- round(dt_sdx$sdx,2)
+dt_sdy$sdy <- round(dt_sdy$sdy,2)
+dt_corr$cor <- round(dt_corr$cor,2)
+dt_join <- right_join(dt_meanx, dt_meany, by = "dataset")
+
+dt_join <- right_join(dt_join, dt_sdx, by = "dataset")
+dt_join <- right_join(dt_join, dt_sdy, by = "dataset")
+dt_join <- right_join(dt_join, dt_corr, by = "dataset")
+kable(dt_join, col.names = c("Dataset", "Mean(x)", "Mean(y)", "StdDev(x)", "StdDev(y)", "Corr(x,y)"),caption = "Comparison of DataSets")
+```

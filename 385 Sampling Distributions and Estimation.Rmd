@@ -1,0 +1,220 @@
+---
+title: "Sampling Distributions and Estimation"
+subtitle: "An implementation in R Markdown"
+author: "Tom Bruning"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+library(tufte)
+require(dplyr)
+require(tidyr)
+require(ggplot2)
+require(ggthemes)
+require(knitr)
+require(tibble)
+
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
+options(htmltools.dir.version = FALSE)
+```
+
+# Sampling Distributions and Estimation  
+
+## Sampling Variation  
+
+- **Sample statistic** – a random variable whose value depends on which population items are included in the random sample.  
+- Depending on the sample size, the sample statistic could either represent the population well or differ greatly from the population.  
+This sampling variation can easily be illustrated.  
+Consider eight random samples of size n = 5 from a large population of GMAT scores for MBA applicants.
+
+```{r, echo = FALSE, fig.margin=TRUE}
+a <- tibble(a=c(490,580,440,580,430))
+b <- tibble(c(310,590,730,710,540))
+c <- tibble(c(500,450,510,570,610))
+d <- tibble(c(450,590,710,240,510))
+e <- tibble(c(420,640,470,530,640))
+f <- tibble(c(450,670,390,500,470))
+g <- tibble(c(490,450,590,640,650))
+h <- tibble(c(670,610,550,540,540))
+
+i <- bind_cols(a,b,c,d,e,f,g,h)
+kable(i, col.names = c(1,2,3,4,5,6,7,8),caption = "Random sample from GMAT Scores Population")
+
+a <- tibble(x="1",y=c(490,580,440,580,430),z="x")
+b <- tibble(x="2",y=c(310,590,730,710,540),z="x")
+c <- tibble(x="3",y=c(500,450,510,570,610),z="x")
+d <- tibble(x="4",y=c(450,590,710,240,510),z="x")
+e <- tibble(x="5",y=c(420,640,470,530,640),z="x")
+f <- tibble(x="6",y=c(450,670,390,500,470),z="x")
+g <- tibble(x="7",y=c(490,450,590,640,650),z="x")
+h <- tibble(x="8",y=c(670,610,550,540,540),z="x")
+
+i <- bind_rows(a,b,c,d,e,f,g,h)
+
+k <- group_by(i,x)
+
+l <- summarize(k,y=mean(y))
+# l <- tibble(l)
+z1 <- tibble((rep("Sample Mean",8)))
+colnames(z1) <- "z"
+l <- bind_cols(l,z1)
+i <- bind_rows(i, l)
+i$z <- as.factor(i$z)
+kable(l[,1:2], col.names = c("Sample", "Mean"))
+ggplot(i, aes(x=x, y=y, group=z))+ geom_point(aes(shape=z)) +  geom_hline(yintercept=mean(i$y),linetype="dashed") + scale_shape_manual(values=c(10,1)) + theme_tufte() +
+xlab("Samples") + ylab("Scores") + theme(legend.title=element_blank())
+
+
+```
+
+The dot plot on the right shows that the sample means have much less variation than the individual sample items.  The mean of the population is the dotted line which equals 520.28.
+
+## 8.2  Estimators and Sampling Distributions  
+
+ Some Terminology  
+ 
+- **Estimator** – a statistic derived from a sample to infer the value of a population parameter.  
+- **Estimate** – the value of the estimator in a particular sample.  
+- Population parameters are usually represented by 
+Greek letters and the corresponding statistic 
+by Roman letters.  
+
+
+The sample mean ($\bar{x}$) is the estimator for the population mean ($\mu$).  
+The sample proportion ($p$) is the estimator for the population proportion ($\pi$).  
+The sample standard deviation ($s$) is the estimator for the population standard deviation ($\sigma$)  
+
+
+**Sampling error** is the difference between an estimate and the corresponding population parameter.  For example, if we use the sample mean as an estimate for the population mean. 
+\begin{equation}
+Sampling\ Error= \bar{x}-\mu
+\end{equation}
+**Bias** is the difference between the expected value of the estimator and the true parameter.  
+\begin{equation}
+Bias=E(\bar{X}) - \mu
+\end{equation}
+An estimator is unbiased if its expected value is the parameter being estimated.  The sample mean is an unbiased estimator of the population mean since:
+\begin{equation}
+Bias=E(\bar{X}) - \mu.
+\end{equation}
+
+
+On average, an unbiased estimator neither overstates nor understates the true parameter.
+
+## Sample Mean and the Central Limit Theorem
+
+**The Central Limit Theorem for a Mean** - If a random sample of size n is drawn from a population with mean $\mu$ and standard deviation $\sigma$, the distribution of the  sample mean $\bar{X}$ approaches a normal distribution with mean $\mu$ and standard deviation $\sigma_{\bar{x}}=\sigma/\sqrt{n}$ as the sample size increases.  
+
+
+The Central Limit Theorem is a powerful result that allows us to approximate the shape of the sampling distribution of the sample mean even when we don’t know what the population looks like.  
+
+- If the population is exactly normal, then the sample mean follows a normal distribution.  
+- As the sample size n increases, the distribution of sample means narrows in on the population mean $\mu$.  
+
+
+- If the sample is large enough, the sample means will have approximately a normal distribution even if your population is not normal.
+
+##  Applying The Central Limit Theorem  
+     
+The Central Limit Theorem permits us to define an **interval** within which the sample means are expected to fall. As long as the sample size n is large enough, we can use the normal distribution regardless of the population shape (or any n if the population is normal to begin with).
+
+- Expected range of Sample means:
+\begin{equation}
+\mu \pm z\frac{\sigma}{\sqrt{n}}
+\end{equation}
+
+## Illustration:  All Possible Samples from a Uniform Population  
+
+- Consider a discrete uniform population consisting of the integers {0, 1, 2, 3}.
+
+```{r, echo = FALSE, fig.margin=TRUE, warning=FALSE, message=FALSE, fig.cap="Uniform and Means Distribution"}
+
+a <- tibble(c("(0,0)","(0,1)","(0,2)","(0,3)"))
+b <- tibble(c("(1,0)","(1,1)","(1,2)","(1,3)"))
+c <- tibble(c("(2,0)","(2,1)","(2,2)","(2,3)"))
+d <- tibble(c("(3,0)","(3,1)","(3,2)","(3,3)"))
+e <- bind_cols(a,b,c,d)
+colnames(e) <- c("a ","b ","c ","d ")
+kable(e, caption = "All possible samples n=2")
+
+
+a <- tibble(c(0,.5,1,1.5))
+b <- tibble(c(.5,1,1.5,2))
+c <- tibble(c(1,1.5,2,2.5))
+d <- tibble(c(1.5,2,2.5,3))
+e <- bind_cols(a,b,c,d)
+colnames(e) <- c("a ","b ","c ","d ")
+kable(e, caption = "Means of all possible samples n=2")
+
+
+g <- tibble(x=c(0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3))
+h <- tibble(y=c(0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3))
+i <- bind_cols(g,h)
+colnames(i) <- c("g","h")
+i <- i %>% mutate(m=(g+h)/2)
+
+ggplot(i, aes(x=g)) + geom_histogram() + theme_tufte() + ylab(" ") + xlab(" ") + ggtitle("Population") 
+
+ggplot(i, aes(x=m)) + geom_histogram()+ theme_tufte() + ylab(" ") + xlab(" ") + ggtitle("Sample Means (n=2)") 
+```
+
+The population parameters are:  $\mu = 1.5$, $\sigma = 1.118$.  
+
+As you can see in the two graphs to the right, the top one is the histogram of the data above.  The x-axis is the first item in each of the cells above, and the y-axis is the count of each of the corresponding cell.  So, there are 4 combinations with 0 as the first number, 4 with the 1 as the first number, and so on.  This is a uniform distribution.   
+The bottom graph is a histogram of the means of each of the cells above.  So there is one cell with a mean 0, 2 with a mean of 1.5, 3 with a mean of 1, etc.  The means of the uniform distribution is a normal distribution with the mean of 1.5.
+
+##  What is a Confidence Interval?  
+
+
+ A sample mean $\bar{x}$ calculated from a random sample $x_1,x_2,x_3,...x_n$ is a **point estimate** of the unknown population mean $\mu$.  Because samples vary, we need to indicate our uncertainty about the true value of $\mu$.  Based on our knowledge of the sampling distribution of $\bar{X}$, we can create an **interval estimate** for $\mu$.  We construct a **confidence interval** for the unknown mean $\mu$ by adding and subtracting a **margin of error** from $\bar{x}$, the mean of our random sample.  The **confidence level** for this interval is expressed as a percentage such as 90, 95, or 99 percent.  
+ 
+The confidence interval for a mean $\mu$ with known $\sigma$ is:  
+\begin{equation}
+\bar{x} \pm z_{\alpha/2}\frac{\sigma}{\sqrt{n}}    
+\end{equation}
+##   Choosing a Confidence Level    
+
+- A higher confidence level leads to a wider confidence interval.   
+- Greater confidence implies loss of precision (i.e. greater margin of error).  
+    - 95% confidence  is most often used.  
+
+Confidence Level: 90, $z_{.05} = 1.645$  
+Confidence Level: 95, $z_{.025} = 1.960$  
+Confidence Level: 98, $z_{.01} = 2.326$  
+Confidence Level: 99, $z_{.005} = 2.576$  
+
+    
+## Confidence Interval for a Mean ($\mu$) with              known  ($\sigma$)  
+
+ Interpretation    
+ 
+- A confidence interval either does or does not contain $\mu$.   
+- The confidence level quantifies the risk.   
+- Out of 100 confidence intervals, approximately 95% may contain $\mu$, while approximately 5% might not contain $\mu$ when constructing 95% confidence intervals.  
+ When  Can We Assume Normality?       
+ 
+- If $\sigma$ is known and the population is normal, then we can safely use the formula to compute the confidence interval.   
+- If $\sigma$ is known and we do not know whether the population is normal, a common rule of thumb is that $n \ge 30$ is sufficient to use the formula as long as the distribution is approximately symmetric with no outliers.   
+- Larger n may be needed to assume normality if you are sampling from a strongly skewed population or one with outliers.  
+
+## Confidence Interval Width   
+Confidence interval width reflects
+
+- the sample size,   
+- the confidence level and    
+- the standard deviation.   
+To obtain a narrower interval and more precision   
+
+- increase the sample size or    
+- lower the confidence level (e.g., from 90% 	to 80% confidence).  
+
+    
+
