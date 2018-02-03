@@ -15,3 +15,6 @@ vignettes/*.pdf
 .Rproj.user
 # test files
 test*.*
+*_cache*
+*_files*
+*log
