@@ -191,94 +191,106 @@ Since 0 is less than the entire interval, we can be 95% confident that $\mu_{NYS
 
 The ith paired difference is  $D_i$ , where  
 $D_i = X_{1i} - X_{2i}$ 
-   The point estimate for the paired difference population mean $\mu_D\  is  \bar{D}$ :  
-   $\bar{D} = \frac{\sum_i^n D_i}{n}$
-The sample standard deviation is $S_D$:
+  The point estimate for the paired difference population mean $\mu_D\  is  \bar{D}$ :  
+  $\bar{D} = \frac{\sum_i^n D_i}{n}$
+    The sample standard deviation is $S_D$:
     $S_p=\sqrt{\frac{\sum_i^n (D_i-\bar{D)^2}}{n-1}}$  
-n  is the number of pairs in the paired sample  
-## The Paired Difference Test: Finding $t_{STAT}$
-
+      n  is the number of pairs in the paired sample  
+    ## The Paired Difference Test: Finding $t_{STAT}$
+    
 The test statistic for  $\mu_D$  is:  
-  $t_{stat}= \frac{\bar{D}=\mu_D}{\frac{S_D}{\sqrt{n}}}$   
+\begin{equation}
+t_{stat}= \frac{\bar{D}=\mu_D}{\frac{S_D}{\sqrt{n}}}
+\end{equation}
 Where  $t_{STAT}$  has  n - 1  d.f.  
 Paired Samples  
-
+    
 - Lower-tail test:
-
+      
   $H_0: \mu_D \ge 0$  
   $H_1: \mu_D <0$  
   Reject $H_0$ if $t_{STAT} < -t_\alpha$  
-  
+      
 - Upper-tail test:  
-$H_0: \mu_D \le 0$  
-$H_1: \mu_D >0$  
+  $H_0: \mu_D \le 0$  
+  $H_1: \mu_D >0$  
   Reject $H_0$ if $t_{STAT} > t_\alpha$  
-  
+      
 - Two-tail test:  
-
-$H_0: \mu_D = 0$  
-$H_1: \mu_D \ne 0$  
-Reject $H_0$ if $t_{STAT} < -t_{\alpha/2}\ \ or\ \ t_{STAT} > t_{\alpha/2}$  
-Where  $t_{STAT}$  has  n - 1  d.f.  
-
+      
+  $H_0: \mu_D = 0$  
+  $H_1: \mu_D \ne 0$  
+  Reject $H_0$ if $t_{STAT} < -t_{\alpha/2}\ \ or\ \ t_{STAT} > t_{\alpha/2}$  
+  Where  $t_{STAT}$  has  n - 1  d.f.  
+    
 ## The Paired Difference Confidence Interval
-
+    
 - The confidence interval for $\mu_D$ is:  
-  $\bar{D} \pm t_{\alpha/2}\frac{S_D}{\sqrt{n}}$
-
+\begin{equation}
+\bar{D} \pm t_{\alpha/2}\frac{S_D}{\sqrt{n}}
+\end{equation}
+    
 - where:$S_p=\sqrt{\frac{\sum_i^n (D_i-\bar{D)^2}}{n-1}}$
-
+      
 ## Paired Difference Test Example
-
+      
 Assume you send your salespeople to a “customer service” training workshop.  Has the training made a difference in the number of complaints?  You collect the following data:  
 ```{r, echo=FALSE}
-a <- tibble(c("C.B.", "T.F", "M.H.", "R,K", "M.O."))
-b <- tibble(c(6,20,3,0,4))
-c <- tibble(c(4,6,2,0,0))
-d <- tibble(c(-2,-14,-1,0, -4))
-f <- bind_cols(a,b,c,d)
-kable(f, col.names = c("Salesperson", "Before(1)", "After(2)", "Difference ( 2 - 1) Di"))
-
+    a <- tibble(c("C.B.", "T.F", "M.H.", "R,K", "M.O."))
+    b <- tibble(c(6,20,3,0,4))
+    c <- tibble(c(4,6,2,0,0))
+    d <- tibble(c(-2,-14,-1,0, -4))
+    f <- bind_cols(a,b,c,d)
+    kable(f, col.names = c("Salesperson", "Before(1)", "After(2)", "Difference ( 2 - 1) Di"))
+    
 ```
-
-
-
-
-
-
-- $\bar{D} = \frac{\sum_i^n D_i}{n} = \frac{-21}{5}= -4.2$   
-- $S_p=\sqrt{\frac{\sum_i^n (D_i-\bar{D)^2}}{n-1}} = 5.67$ 
   
-  
+    
+\begin{equation}
+\bar{D} = \frac{\sum_i^n D_i}{n} = \frac{-21}{5}= -4.2
+\end{equation}
+      
+\begin{equation}
+S_p=\sqrt{\frac{\sum_i^n (D_i-\bar{D)^2}}{n-1}} = 5.67
+\end{equation}
+      
+
+      
 ##Paired Difference Test: Solution 
-
+      
 Has the training made a difference in the number of complaints (at the 0.01 level)?  
-$H_0:  \mu_D = 0$
-$H_1:  \mu_D \ne 0$
-
-$\alpha = .01$  
-$\bar{D} = 4.2$  
-$t_{0.005}- 4.604$  from the student t table   
-$t_{0.005} = \pm 4.604$                 d.f. = n - 1 = 4
-
-Test Statistic:  $t_{stat}= \frac{\bar{D}=\mu_D}{\frac{S_D}{\sqrt{n}}}= \frac{\-4.2=0}{\frac{5.67}{\sqrt{5}}}= -1.16$   
-Decision: Do not reject $H_0$
-($t_{stat} is not in the reject region)  
-
+    $H_0:  \mu_D = 0$
+    $H_1:  \mu_D \ne 0$
+        
+    $\alpha = .01$  
+    $\bar{D} = 4.2$  
+    $t_{0.005}- 4.604$  from the student t table   
+    $t_{0.005} = \pm 4.604$                 d.f. = n - 1 = 4
+      
+Test Statistic:  
+        \begin{equation}
+      t_{stat}= \frac{\bar{D}=\mu_D}{\frac{S_D}{\sqrt{n}}}= \frac{\-4.2=0}{\frac{5.67}{\sqrt{5}}}= -1.16
+      \end{equation}
+      Decision: Do not reject $H_0$
+        ($t_{stat} is not in the reject region)  
+      
 Conclusion: There is not a  significant change in the number of complaints.
-
+      
 ## The Paired Difference Confidence Interval - Example
-
+      
 The confidence interval for $\mu_D$ is: $\bar{D} \pm t_{\alpha/2}\frac{S_D}{\sqrt{n}}$  
-
+        
 $\bar{D}  = -4.2,\  S_D = 5.67$
 $\-4.2 \pm 4.604\frac{5.67}{\sqrt{4}} = (-15.87,7.47)$ 
-
-
+        
+        
 Since this interval contains 0 cannot be 99% confident that $\mu_D$ doesn’t = 0.
-
-
-
-
-
-
+      
+      
+      
+      
+      
+      
+    
+    
+  
