@@ -36,7 +36,7 @@ options(htmltools.dir.version = FALSE)
 - A point estimate is a single number,    
 - A confidence interval provides additional information about the variability of the estimate   
 
-![Confidence Interval](./ci.png)  
+![Confidence Interval](./images/ci.png)  
 
 ## Point Estimate
 

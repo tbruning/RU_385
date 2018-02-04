@@ -120,7 +120,7 @@ t_{stat}= \frac{(\bar{X}_1 - \bar{X}_2) - (\mu_1=\mu_2)}  {\sqrt{S^2_p(\frac{1}{
 
 
 
-  Where  $t_STAT$  has d.f. = $(n_1 + n_2 – 2)$
+  Where  $t_{STAT}$  has d.f. = $(n_1 + n_2 – 2)$
 
 ## Pooled-Variance t Test Example
 
@@ -138,15 +138,19 @@ Assuming both populations are approximately normal with equal variances, is ther
 
 $H_0: \mu_1 - \mu_2 = 0\ \   i.e.\ \  (\mu_1 = \mu_2)$  
 $H_1: \mu_1 - \mu_2 \ne 0\ \   i.e.\ \  (\mu_1 \ne \mu_2)$  
+\begin{equation}
+S^2_p = \frac{(n_1 -1)S^2_1+(n_2 -1)S^2_2 }{(n_1-1) + (n_2 - 1) } = \frac{(21 -1)1.30^2+(25 -1)1.16^2}{(21-1) + (25- 1)}=1.5021
+\end{equation}
 
-$S^2_p = \frac{(n_1 -1)S^2_1+(n_2 -1)S^2_2 }{(n_1-1) + (n_2 - 1) } = \frac{(21 -1)1.30^2+(25 -1)1.16^2}{(21-1) + (25- 1)}=1.5021$
+\begin{equation}t_{stat}= \frac{(\bar{X}_1 - (\bar{X}_2) - (\mu_1=\mu_2}  {\sqrt{S^2_p(\frac{1}{n_1}+\frac{1}{n_2})}}= \frac{(3.27 - 2.53) - 0}  {\sqrt{1.5021(\frac{1}{21}+\frac{1}{25})}} = 2.040
+\end{equation}
 
-$t_{stat}= \frac{(\bar{X}_1 - (\bar{X}_2) - (\mu_1=\mu_2}  {\sqrt{S^2_p(\frac{1}{n_1}+\frac{1}{n_2})}}= \frac{(3.27 - 2.53) - 0}  {\sqrt{1.5021(\frac{1}{21}+\frac{1}{25})}} = 2.040$  
+
 Note: You assume $\mu_1- \mu_2 = 0$ since you are trying to reject $H_0$
 
-$\alpha$ = 0.05
-df = 21 + 25 - 2 = 44
-Critical Values: $t = \pm 2.0154$ (from the student t table)
+$\alpha$ = 0.05    
+df = 21 + 25 - 2 = 44    
+Critical Values: $t = \pm 2.0154$ (from the student t table)   
 
 Test Statistic = 2.040
 
@@ -158,10 +162,15 @@ Conclusion: There is evidence of a difference in means.
 
 Since we rejected $H_0$ can we be 95% confident that $\mu_{NYSE} > \mu_{NASDAQ}$?
 
-95% Confidence Interval for $\mu_{NYSE} - \mu_{NASDAQ}$
+95% Confidence Interval for $\mu_{\ NYSE} - \mu_{\ \ NASDAQ}$
+\begin{equation}
+(\bar{X}_1- \bar{X}_2) \pm t_{\alpha/2} \sqrt{S^2_p(\frac{1}{{n_1}}+\frac{1}{n_2})}
+\end{equation}
+\begin{equation}
+(3.27- 2.53 ) \pm 2.0154 \sqrt{1.5021(\frac{1}{{21}}+\frac{1}{25})}= 0.74 \pm 2.0154(0.3628)
+\end{equation}
 
-$(\bar{X}_1- \bar{X}_2) \pm t_{\alpha/2} \sqrt{S^2_p(\frac{1}{{n_1}}+\frac{1}{n_2})} = (3.27- 2.53 ) \pm 2.0154 \sqrt{1.5021(\frac{1}{{21}}+\frac{1}{25})}= 0.74 \pm 2.0154(0.3628)= (0.009, 1.471)$
-
+The calculated interval is from: 0.009 to 1.471.   
 
 Since 0 is less than the entire interval, we can be 95% confident that $\mu_{NYSE} > \mu_{NASDAQ}$
 
