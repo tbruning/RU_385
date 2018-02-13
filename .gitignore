@@ -13,6 +13,7 @@
 vignettes/*.html
 vignettes/*.pdf
 .Rproj.user
+.RData
 # test files
 test*.*
 *_cache*
