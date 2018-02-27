@@ -1,0 +1,460 @@
+---
+title: "Simple Regression"
+subtitle: "An implementation in R Markdown"
+author: "Tom Bruning"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+library(tufte)
+require(dplyr)
+require(tidyr)
+require(ggplot2)
+require(ggthemes)
+require(knitr)
+require(tibble)
+require(gridExtra)
+require(grid)
+
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
+options(htmltools.dir.version = FALSE)
+```
+
+# Simple Regression  
+
+In this chapter, you learn: 
+
+
+
+- How to use regression analysis to predict the value of a dependent variable based on a value of an  independent variable. 
+- The meaning of the regression coefficients b0 and b1  
+- How to evaluate the assumptions of regression analysis and know what to do if the assumptions are violated. 
+- To make inferences about the slope and correlation coefficient.  
+- To estimate mean values and predict individual values.  
+
+## Correlation vs. Regression
+
+- A scatter plot can be used to show the relationship between two variables.  
+- Correlation analysis is used to measure the strength of the association (linear relationship) between two variables. 
+
+    - Correlation is only concerned with strength of the relationship.  
+    - No causal effect is implied with correlation. 
+    - Scatter plots were first presented in Ch. 2  
+    - Correlation was first presented in Ch. 3
+    
+    
+There are four types of relationships between two variables:   
+
+- Strong - As X goes up (or down) Y goes up (or down) and the association is closely linked.  
+- Weak - As X goes up (or down) Y goes up (or down) and the association is more varied.   
+- Linear - One variable has the predominant effect on another  
+- Curvilinear - More than one variable has the predominant effect on another  
+
+## Introduction to Regression Analysis
+
+Regression analysis is used to:  
+
+- Predict the value of a dependent variable based on the value of at least one independent variable.  
+- Explain the impact of changes in an independent variable on the dependent variable  
+
+Two Variable Types: 
+
+- **Dependent variable:** the variable we wish to predict or explain
+- **Independent variable:**  the variable used to predict or explain the dependent variable   
+
+## Simple Linear Regression Model
+
+- Only one independent variable, $X$  
+- Relationship between  $X$  and  $Y$  is described by a linear function  
+- Changes in $Y$ are *assumed* to be related to changes in $X$
+- The basic model;   
+
+\begin{equation}
+    Y_i=B_o+ B_1X_i+e_i  
+\end{equation}
+
+
+    Where:  
+    $Y_i$ is the Dependent variable  
+    $B_o$ is the Population Y intercept  
+    $B_1$ is the Population Slope coefficient  
+    $X_i$ is the Independent variable     
+    $e_i$ is the random error term  
+    $B_o+ B_1X_i$ is the linear component
+    $e_i$ is the random error component  
+    
+    
+  ![](.\images\regression_model.png)
+  
+## Why Graphing the Data is so important  
+
+Suppose you have 4 data sets (DS1-DS4), with paired values (X and Y) like so:
+
+```{r, echo=FALSE}
+mydata=with(anscombe,data.frame(xVal=c(x1,x2,x3,x4), yVal=c(y1,y2,y3,y4), mygroup=gl(4,nrow(anscombe))))
+ds1 <- select(anscombe,contains("1"))
+ds2 <- select(anscombe,contains("2"))
+ds3 <- select(anscombe,contains("3"))
+ds4 <- select(anscombe,contains("4"))
+ds <- bind_cols(ds1,ds2,ds3,ds4)
+colnames(ds) <- c("DS1_x", "DS1_y","DS2_x", "DS2_y","DS3_x", "DS3_y","DS4_x", "DS4_y")
+kable(ds)
+
+```
+
+The following table, using the data from the dataset above, produces the summary data, displaying the variables that are used to compute the linear regression model for the four datasets.  Because this data is identical, to 2 decimal places, the regression equation is identical for each dataset.  
+```{r, echo=FALSE}
+mydata=with(anscombe,data.frame(xVal=c(x1,x2,x3,x4), yVal=c(y1,y2,y3,y4), mygroup=gl(4,nrow(anscombe))))
+# aggregate(.~mygroup,data=mydata,mean)
+# aggregate(.~mygroup,data=mydata,sd)
+# aggregate(.~mygroup,data=mydata,var)
+# aggregate(.~mygroup,data=mydata,cor(xVal,yVal))
+ds1 <- select(anscombe,contains("1"))
+ds2 <- select(anscombe,contains("2"))
+ds3 <- select(anscombe,contains("3"))
+ds4 <- select(anscombe,contains("4"))
+ds <- bind_cols(ds1,ds2,ds3,ds4)
+colnames(ds) <- c("DS1_x", "DS1_y","DS2_x", "DS2_y","DS3_x", "DS3_y","DS4_x", "DS4_y")
+mygrp <- group_by(mydata, mygroup)
+ds_x_means <- summarize(mygrp,mean(xVal) )
+ds_y_means <- summarize(mygrp,mean(yVal) )
+ds_x_var <- summarize(mygrp,var(xVal) )
+ds_y_var <- summarize(mygrp,var(yVal) )
+
+ds_cor <- summarize(mygrp, cor(xVal, yVal))
+colnames(ds_cor) <- c("mygroup", "cor")
+ds_cor <- as.data.frame(ds_cor)
+ds_means <- right_join(ds_x_means,ds_y_means, by = "mygroup")
+ds_var <- right_join(ds_x_var,ds_y_var, by = "mygroup")
+ds_sum1 <- right_join( ds_means, ds_var, by = "mygroup")
+ds_sum1 <- right_join(ds_sum1, ds_cor, by ='mygroup')
+colnames(ds_sum1) <- c("Dataset", "Mean_x", "Mean_y", "Var_x", "Var_y", "Cor")
+ds_sum1$Mean_y <- round(ds_sum1$Mean_y,2)
+ds_sum1$Var_y <- round(ds_sum1$Var_y,2)
+ds_sum1$Cor <- round(ds_sum1$Cor,2)
+kable(ds_sum1)
+```
+
+The following scatterplots show the four datasets, and the regression line for each dataset.  As you can see, the data doesn't look at all similar, even though the regression is identical.  The formula that produces this regression line is $\hat{Y}=3.00 + .50X$.
+
+```{r, echo=FALSE}
+
+ggplot(mydata,aes(x=xVal, y=yVal)) + geom_point() + xlim(0,20) + ylim(0,14) + facet_wrap(~mygroup) +
+  stat_smooth(method = "lm", col = "red", se=FALSE) 
+```
+
+
+## Simple Linear Regression Equation (Prediction Line)
+  
+The simple linear regression equation provides an estimate of the population regression line  
+
+\begin{equation}
+\hat{Y} =b_0+b_1X_i
+\end{equation}
+  Where:  
+  $\hat{Y}$ is the estimated  (or predicted) Y value for observation i  
+  $b_0$ is the estimate of the regression intercept  
+  $b_1$ is the estimate of the regression slope   
+  $X_i$ is the value of X for observation i  
+  
+## The Least Squares Method  
+
+$b_0$  and  $b_1$  are obtained by finding the values of  that minimize the sum of the squared differences between $Y$ and  $\hat{Y}$ :  
+
+\begin{equation}
+  min\sum(y_i-\hat{y})^2=min\sum(y_i-(b_o+b_1x_i))^2
+\end{equation}
+
+The least squares method is analogous to the mean of the residuals.  For the mean of a data set, the difference between the sum of all elements in the dataset and any other value (OV) (not in the dataset) squared is minimized when the other value (OV) is the mean of the values in the dataset.  
+   
+\begin{equation}  
+   \mu = \sum_{i-1}^N = Min \sum_1^n (x_i - OV)^2    
+\end{equation}  
+## Example  
+```{r, echo=FALSE}
+
+library(tufte)
+require(dplyr)
+require(tidyr)
+require(ggplot2)
+require(ggthemes)
+require(knitr)
+require(tibble)
+library(tufte)
+require(dplyr)
+require(tidyr)
+require(ggplot2)
+require(ggthemes)
+require(knitr)
+require(tibble)
+set.seed(1001)
+a <- tibble(a=sample(1:101,30))
+a1 <- tibble(a1=50.2,b=sum((a-50.2)^2))
+a2 <- tibble(a1=50.3,b=sum((a-50.3)^2))
+a3 <- tibble(a1=50.4,b=sum((a-50.4)^2))
+a4 <- tibble(a1=50.5,b=sum((a-50.5)^2))
+a5 <- tibble(a1=50.6,b=sum((a-50.6)^2))
+a6 <- tibble(a1=50.7,b=sum((a-50.7)^2))
+a7 <- tibble(a1=50.8,b=sum((a-50.8)^2))
+a8 <- tibble(a1=50.9,b=sum((a-50.9)^2))
+a9 <- tibble(a1=51.0,b=sum((a-51)^2))
+a10 <- tibble(a1=51.1,b=sum((a-51.1)^2))
+a11 <- tibble(a1=51.2,b=sum((a-51.2)^2))
+
+a_all <- bind_rows(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11)
+
+
+```
+
+I have created a dataset with 30 values, randomly chosen from a range from 0-100.``
+
+```{r, echo=FALSE, fig.margin=TRUE}
+ggplot(a_all, aes(x=a1, y=b)) + geom_line() +
+  xlab("Proported Means") + ylab("Summed square of difference")
+
+```
+
+The mean of these 30 values is 50.7.  I created a second dataset whose values ranged from 50.2 to 51.2 whose midpoint is the mean of the random data. I summed the squared difference of each value in the dataset by a value between 50.2 and 51.2 and plotted these sums.  The minimum value of the Y-axis in the following plot is the where the x-value is the mean of the 30 item dataset.
+
+
+
+
+## Interpretation of the Slope and the Intercept
+
+- $b_0$ is the estimated average value of Y when the value of X is zero  
+
+- $b_1$ is the estimated change in the average value of Y as a result of a one-unit increase in X
+
+## Simple Linear Regression Example
+
+- A real estate agent wishes to examine the relationship between the selling price of a home and its size (measured in square feet).  
+
+
+- A random sample of 10 houses is selected  
+
+    - Dependent variable (Y) = house price in $1000s   
+    - Independent variable (X) = square feet   
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+a <- tibble(c(245,312,279,308,199,219,405,324,319,255))
+b <- tibble(c(1400,1600,1700,1875,1100,1550,2350,2450,1425,1700))
+c <- as.data.frame(bind_cols(a,b))
+colnames(c) <- c("House Price", "Sq. Ft.")
+kable(c, col.names = c("House Price in $1000s (Y)", "Square Feet (X)"),caption = "Housing Data")
+## grid.arrange(tableGrob(c))
+
+```
+
+## Scatterplot of the Data
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+plot1 <- ggplot(c, (aes(x=b, y=a))) + geom_point() + xlab("Square Feet") + ylab("House Price ($1,000") + theme_tufte() +xlim(0,3000) +ylim(0,450) + geom_rug()
+c <- as.data.frame(c)
+colnames(c) <- c("a", "b")
+total<-anova(lm(c$a ~ c$b, data=c))
+coeff <- lm(c$a ~ c$b, data=c)
+##grid.arrange(
+##  plot1,
+##  tableGrob(round(coeff$coefficients,4)),
+##    tableGrob(round(total,3)),
+##  nrow = 3)
+
+
+```
+```
+ ![](.\images\housingprice.png)
+
+## House price model:  Scatter Plot and Prediction Line
+
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(c, (aes(x=b, y=a))) + geom_point() + xlab("Square Feet") + geom_rug() + ylab("House Price ($1,000") + theme_tufte() +
+  stat_smooth(method = "lm", col = "red", se=FALSE) +xlim(0,3000) +ylim(0,450) 
+```
+- Estimated House Price = 98.24833 + 0.10977(sq ft)
+
+## Simple Linear Regression Example:  Interpretation of $b_o$
+
+- $b_0$ is the estimated average value of Y when the value of X is zero (if X = 0 is in the range of observed X values).  
+- Because a house cannot have a square footage of 0, $b_0$ has no practical application.
+
+## Simple Linear Regression Example:  Interpreting $b_1$
+
+- $b_1$ estimates the change in the average value of Y as a result of a one-unit increase in X.  
+- Here, $b_1$ = 0.10977 tells us the mean value of a house increases by .10977(\$1000) \$109.77, on average, for each additional square foot.  
+
+## Simple Linear Regression Example:  Making Predictions
+
+- Predict the price for a house with 2000 square feet:   
+  Estimate price = 98.25 + 0.1098(sq.ft.)   
+  = 98.25 + 0.1098(2000)   
+  = 317.85   
+The predicted price for a house with 2000 square feet is 317.85(\$1,000s) = \$317,850
+
+## Beware of overrunning your headlights   
+
+- When using a regression model for prediction, only predict within the relevant range of data.  
+- Relevant range for interpolation - 1,000 to 2,500 square feet.  
+- Do not try to extrapolate beyond the range of observed X’s
+
+## Measures of Variation
+
+ ![](.\images\sourcesofvar.png)
+Total variation is made up of two parts:  
+
+- $SST= SSR + SSE$
+
+Total Sum of Squares = Regression Sum of Squares +
+Error Sum of Squares  
+
+- $SST=\sum(Y_i-\bar{Y})^2$  
+- $SSR=\sum(\hat{Y_i}-\bar{Y})^2$
+- $SSE=\sum(Y_i -\hat{Y})^2$
+where:
+	$\bar{Y}$  = Mean value of the dependent variable  
+	$Y_i$ = Observed value of the dependent variable  
+	$\hat{Y}$  = Predicted value of Y for the given $X_i$ value  
+
+
+
+- SST = total sum of squares     (Total Variation)    
+    - Measures the variation of the Yi values around their mean Y   
+    
+- SSR = regression sum of squares  (Explained Variation)  
+
+    - Variation attributable to the relationship between X and Y
+    
+- SSE = error sum of squares   (Unexplained Variation)  
+    - Variation in Y attributable to factors other than X
+    
+
+
+
+## Coefficient of Determination, $r^2$
+
+
+- The coefficient of determination is the portion of the total variation in the dependent variable that is explained by variation in the independent variable.  
+- The coefficient of determination is also called r-squared and is denoted as $r^2$
+
+- $r^2= \frac{SSR}{SST}= \frac{Regression\ Sum\ of\ Squares}{Total\ Sum\ Squares}$   
+
+- Note: $0 \le r^2 \le 1$
+
+## Assumptions of Regression L.I.N.E  
+
+- Linearity  
+    - The relationship between X and Y is linear  
+- Independence of Errors  
+    - Error values are statistically independent  
+- Normality of Error  
+    - Error values are normally distributed for any given value of X  
+- Equal Variance (also called homoscedasticity)   
+    - The probability distribution of the errors has constant variance   
+    
+## Residual Analysis  
+
+- The residual for observation i, $e_i$, is the difference between its observed and predicted value  
+- Check the assumptions of regression by examining the residuals  
+    - Examine for linearity assumption   
+    - Evaluate independence assumption   
+    - Evaluate normal distribution assumption   
+    - Examine for constant variance for all levels of X (homoscedasticity)    
+- Graphical Analysis of Residuals
+Can plot residuals vs. X
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+a <- tibble(c(245,312,279,308,199,219,405,324,319,255))
+b <- tibble(c(1400,1600,1700,1875,1100,1550,2350,2450,1425,1700))
+c <- bind_cols(a,b)
+# 
+# kable(c, col.names = c("House Price in $1000s (Y)", "Square Feet (X)"),caption = "Housing Data")
+
+a <- tibble(a= c(245,312,279,308,199,219,405,324,319,255))
+b <- tibble(b= c(1400,1600,1700,1875,1100,1550,2350,2450,1425,1700))
+c <- bind_cols(a,b)
+d <- c %>% 
+  mutate(d=98.24833+.10977*b) %>% 
+  mutate(e=a-d)
+
+kable(d, caption = "Residual Analysis", col.names = c("House Price in $1000s", "Square Feet (X)", "Predicted Price", "Residual"))
+ggplot(d, aes(x=b,y=e)) + geom_point() + ylim(-60,80)+ geom_hline(yintercept = 0) + xlab("Sq. Ft.") + ylab("Residual") + geom_rug()
+
+```
+
+## Residual Analysis  
+
+- The residual for observation i, $e_i$, is the difference between its observed and predicted value  
+- Check the assumptions of regression by examining the residuals  
+    - Examine for linearity assumption   
+    - Evaluate independence assumption   
+    - Evaluate normal distribution assumption   
+    - Examine for constant variance for all levels of X (homoscedasticity)    
+- Graphical Analysis of Residuals
+Can plot residuals vs. X
+
+
+## Checking for Normality  
+
+- Examine the Stem-and-Leaf Display of the Residuals  
+- Examine the Boxplot of the Residuals  
+- Examine the Histogram of the Residuals  
+- Construct a Normal Probability Plot of the Residuals
+
+
+
+## Confidence Interval Estimate for the Slope
+
+Remember: When using the confidence interval method for hyptothesis testing, the null hypothesis is that (in this case) the slope is 0, and the alternative hypothesis is the slope is not equal to zero.
+
+$H_0: \beta_1 = 0$ and   
+$H_1: \beta_1 \ne 0$  
+Which translate into: *If the interval does not include 0 reject* $H_0$
+
+
+ !["Excel Output"](.\images\excel1.png)
+
+
+At 95% level of confidence, the confidence interval for the slope is (0.0337, 0.1858).   
+
+Since the units of the house price variable is \$1000s, we are 95% confident that the average impact on sales price is between \$33.74 and \$185.80 per square foot of house size.   
+This 95% confidence interval does not include 0.   
+Conclusion: There is a significant relationship between house price and square feet at the .05 level of significance 
+
+ 
+ 
+## Estimating Mean Values and Predicting Individual Values
+ 
+ Goal:  Form intervals around Y to express uncertainty about the value of Y for a given $X_i$
+ 
+ There are two intervals we are concerned with:  
+ 
+ * Confidence Interval for the **mean** of Y, given $X_i$  
+ * Prediction Interval for an **individual** Y, given $X_i$  
+ 
+ The chart belows these concepts. 
+ 
+ *  The points represent the data pairs,   
+ *  the solid line represents the regression,  
+ *  the shaded area represents limits of the mean of Y given $X_i$,  
+ *  the dotted line represents the upper and lower limits for an individual Y,  given $X_i$ 
+ 
+ ![](.\images\predvsconfintv.png)
+
+
+ ![](.\images\raforEV.png)
+
+ ![](.\images\residual_normality.png)
+
+
+ ![](.\images\rai.png)
+

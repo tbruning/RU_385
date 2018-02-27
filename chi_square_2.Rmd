@@ -76,7 +76,7 @@ $f_e$ is the expected frequency of each cell ir $H_0$ is true
 (Assume: each cell has an expected frequency of at least 5)  
 
 ## Decision Rule   
-The $\chi_{STAT}^2$ test statistic approximately follows a  chi-squared distribution with (rows -1) time (columns -1) degrees of freedom.   
+The $\chi_{STAT}^2$ test statistic approximately follows a  chi-squared distribution with (rows -1) times (columns -1) degrees of freedom.   
 Decision Rule:  
 If $\chi_{STAT}^2 > \chi_\alpha^2$ reject $H_0$.   
 
@@ -93,8 +93,9 @@ $n_1$ is number of items in the first group
 $n_k$ is number of items in the $k^{th}$ group   
 
 For this example:  
-
-$\bar p = \frac{12+ 24}{180 + 120} = \frac{36}{300} = .12$  
+\begin{equation}
+\bar p = \frac{12+ 24}{180 + 120} = \frac{36}{300} = .12
+\end{equation}
 ## Finding Expected Frequencies   
 
 To obtain the expected frequency for left handed females, multiply the number of females by the overall proportion $\bar p$ of left handers; To obtain the expected frequency for left handed males, multiply the number of males by the overall proportion $\bar p$ of left handers.
@@ -113,17 +114,19 @@ kable(dt, caption = "Observed vs. Expected Table")
 Following the 6 step hypothesis process we have:  
 
 1.  $H_0: \pi_1 = \pi_2$     
-$H_1: \pi_1 \ne  \pi_2$  where
-    $pi_1$ is right handed females, and   
-    $pi_2$ is right handed males   
+$H_1: \pi_1 \ne  \pi_2$  where  
+    $\pi_1$ is right handed females, and   
+    $\pi_2$ is right handed males   
 2. $\alpha=.05$
   $n=300$  
 3. $\chi^2$ Test and and sampling distribution   
-4. Critical value is 3.841 (from $\chi_2$ table with d.f=1 (rows-1)(columns-1))  
+4. Critical value is 3.841 (from $\chi_2$ table with d.f=1 (rows-1)(columns-1)) and $\alpha=.05$  
 4. Determine test statistic:  
   $\chi^2_{STAT} = \sum_{all\ cells} \frac{(f_o - f_e)^2}{f_e}$   
-  $\chi^2_{STAT} = \frac{(12-14.4)_2}{14.4} +\frac{(108-105.6)_2}{105.6} +\frac{(24-21.6)_2}{21.6}+\frac{(156-158.4)_2}{158.4}= 0.7576$  
-5. Decision Rule: If $\chi^2_{STAT}$ > Critical Value, reject $H_0$, thus   
+\begin{equation}
+  \chi^2_{STAT} = \frac{(12-14.4)_2}{14.4} +\frac{(108-105.6)_2}{105.6} +\frac{(24-21.6)_2}{21.6}+\frac{(156-158.4)_2}{158.4}= 0.7576
+\end{equation}
+5. Decision Rule: If $\chi^2_{STAT}$ > Critical Value at , reject $H_0$, thus   
   since 0.7576 is not greater than 3.841 **do not** reject $H_0$.    
   Since we do not reject $H_0$ there is sufficient evidence that the two proportions are different at$\alpha=.05$.  
     
