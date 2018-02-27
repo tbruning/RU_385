@@ -14,6 +14,7 @@ output:
 
 ```{r setup, include=FALSE}
 library(tufte)
+library(tibble)
 require(dplyr)
 require(tidyr)
 require(ggplot2)
@@ -91,8 +92,33 @@ Two Variable Types:
     $B_o+ B_1X_i$ is the linear component
     $e_i$ is the random error component  
     
-    
-  ![](.\images\regression_model.png)
+ 
+```{r, echo=FALSE, fig.width = 6, fig.height=4}
+library(tibble)
+df <- tibble(a=c(0,1,2,3,4,5), b=c(000,100,250,90,50,300))
+dfmean <- mean(df$b) 
+dfxmean <- mean(df$a)
+temp<- expression(paste( hat(Y[i]), " = ", beta[0], " + ", 
+                         beta[1], X[1], " + ",epsilon[i]))
+lm1 <- lm(df$b ~ df$a)
+yend <- 2*34 + 46.67
+ggplot(df, (aes(x=a, y=b))) + geom_point(size=3) + 
+  xlab(" ") + ylab(" ") + ylim(0,325) + 
+  theme_tufte() + geom_rug() +
+  stat_smooth(method = "lm", col = "red", se=FALSE) +
+  geom_segment(aes(x=2,xend=2, y=250, yend=yend))+
+  geom_segment(aes(x=1.4,xend=1.9, y=250, yend=250), arrow=arrow())+  
+  annotate("text", x = 1, y = 250, label = "Observed value \nof Y for x=2") +
+  annotate("text", x = 1, y = 180,
+    label = c("Predicted value \nof Y for x=2")) +
+  annotate("text", x = 3.5, y = 240,
+         label = "Random~error~ (~epsilon)",parse = TRUE)+
+  geom_segment(aes(x=1.5,xend=1.99, y=165, yend=yend +1), arrow=arrow()) +
+geom_segment(aes(x=3,xend=2, y=225, yend=200), arrow=arrow())+
+  annotate("text", x = 2.5, y = 320,
+           label = as.character(temp), parse=TRUE, size=7)
+
+ ```
   
 ## Why Graphing the Data is so important  
 
@@ -315,10 +341,15 @@ Total variation is made up of two parts:
 
 Total Sum of Squares = Regression Sum of Squares +
 Error Sum of Squares  
-
-- $SST=\sum(Y_i-\bar{Y})^2$  
-- $SSR=\sum(\hat{Y_i}-\bar{Y})^2$
-- $SSE=\sum(Y_i -\hat{Y})^2$
+\begin{equation}
+SST=\sum(Y_i-\bar{Y})^2
+\end{equation}
+\begin{equation}
+SSR=\sum(\hat{Y_i}-\bar{Y})^2
+\end{equation}
+\begin{equation}
+SSE=\sum(Y_i -\hat{Y})^2
+\end{equation}
 where:
 	$\bar{Y}$  = Mean value of the dependent variable  
 	$Y_i$ = Observed value of the dependent variable  
@@ -345,7 +376,9 @@ where:
 - The coefficient of determination is the portion of the total variation in the dependent variable that is explained by variation in the independent variable.  
 - The coefficient of determination is also called r-squared and is denoted as $r^2$
 
-- $r^2= \frac{SSR}{SST}= \frac{Regression\ Sum\ of\ Squares}{Total\ Sum\ Squares}$   
+\begin{equation}
+r^2= \frac{SSR}{SST}= \frac{Regression\ Sum\ of\ Squares}{Total\ Sum\ Squares}
+\end{equation}
 
 - Note: $0 \le r^2 \le 1$
 
@@ -387,7 +420,7 @@ d <- c %>%
   mutate(e=a-d)
 
 kable(d, caption = "Residual Analysis", col.names = c("House Price in $1000s", "Square Feet (X)", "Predicted Price", "Residual"))
-ggplot(d, aes(x=b,y=e)) + geom_point() + ylim(-60,80)+ geom_hline(yintercept = 0) + xlab("Sq. Ft.") + ylab("Residual") + geom_rug()
+ggplot(d, aes(x=b,y=e)) + geom_point() + ylim(-60,80)+ geom_hline(yintercept = 0) + xlab("Sq. Ft.") + ylab("Residual") + geom_rug() + theme_tufte()
 
 ```
 
