@@ -50,14 +50,23 @@ y <- c$a
 predict(lm(y ~ x))
 new <- data.frame(x = seq(1000, 2500, 100))
 predict(lm(y ~ x), new, se.fit = TRUE)
+<<<<<<< HEAD
 pred.w.plim <- as.tibble(predict(lm(y ~ x), new, interval = "prediction"))
+=======
+pred.w.plim <- predict(lm(y ~ x), new, interval = "prediction")
+>>>>>>> a4c867f09da036bceabae19931ffd414c2a52ad5
 pred.w.clim <- predict(lm(y ~ x), new, interval = "confidence")
 matplot(new$x, cbind(pred.w.clim, pred.w.plim[,-1]),
         lty = c(1,2,2,3,3), type = "l", ylab = "predicted y")
   
 d <- cbind(pred.w.clim, pred.w.plim[,-1])
+<<<<<<< HEAD
 matplot(new$x, pred.w.plim[,-1],
         lty = c(3,2,2,3,3), type = "l", ylab = "predicted y")           
 ggplot() + geom_line(aes(x=new$x, y= pred.w.plim$lwr), col="red") +
   geom_line(aes(x=new$x, y= pred.w.plim$upr), col="red") + 
   theme_tufte() + ylim(0,500) + xlim(0,3000)
+=======
+           
+           
+>>>>>>> a4c867f09da036bceabae19931ffd414c2a52ad5
