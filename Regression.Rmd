@@ -484,6 +484,7 @@ Conclusion: There is a significant relationship between house price and square f
  ![](.\images\predvsconfintv.png)
 
 
+
  ![](.\images\raforEV.png)
 
  ![](.\images\residual_normality.png)
