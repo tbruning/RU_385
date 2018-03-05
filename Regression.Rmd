@@ -337,7 +337,9 @@ The predicted price for a house with 2000 square feet is 317.85(\$1,000s) = \$31
  ![](.\images\sourcesofvar.png)
 Total variation is made up of two parts:  
 
-- $SST= SSR + SSE$
+\begin{equation}
+SST= SSR + SSE
+\end{equation}
 
 Total Sum of Squares = Regression Sum of Squares +
 Error Sum of Squares  
@@ -424,16 +426,6 @@ ggplot(d, aes(x=b,y=e)) + geom_point() + ylim(-60,80)+ geom_hline(yintercept = 0
 
 ```
 
-## Residual Analysis  
-
-- The residual for observation i, $e_i$, is the difference between its observed and predicted value  
-- Check the assumptions of regression by examining the residuals  
-    - Examine for linearity assumption   
-    - Evaluate independence assumption   
-    - Evaluate normal distribution assumption   
-    - Examine for constant variance for all levels of X (homoscedasticity)    
-- Graphical Analysis of Residuals
-Can plot residuals vs. X
 
 
 ## Checking for Normality  
