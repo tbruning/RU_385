@@ -1,0 +1,276 @@
+---
+title: "Time Series"
+subtitle: "An implementation in R Markdown"
+author: "Tom Bruning"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+library(tufte)
+require(dplyr)
+require(tidyr)
+require(ggplot2)
+require(ggthemes)
+require(knitr)
+require(tibble)
+require(intrval)
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
+options(htmltools.dir.version = FALSE)
+```
+
+# Time Series Forecasting
+
+## The Importance of Forecasting
+
+- Governments forecast unemployment rates, interest rates, and expected revenues from income taxes for policy purposes   
+- Marketing executives forecast demand, sales, and consumer preferences for strategic planning   
+- College administrators forecast enrollments to plan for facilities and for faculty recruitment   
+- Retail stores forecast demand to control inventory levels, hire employees and provide training
+
+## Common Approaches to Forecasting
+
+- Qualitative forecasting methods   
+    - Used when historical data are unavailable   
+    - Considered highly subjective and judgmental
+- Quantitative forecasting methods   
+    - Time series or Causal   
+    - Use past data to predict future values   
+
+## Time-Series Data
+
+- Numerical data obtained at regular time intervals   
+- The time intervals can be annually, quarterly, monthly, weekly, daily, hourly, etc.  
+```{r, echo=FALSE}
+a <- tibble("Sales:")
+b <- tibble(75.3)
+c <- tibble(74.2)
+d <- tibble(78.5)
+e <- tibble(79.7)
+f <- tibble(80.2)
+g <- bind_cols(a,b,c,d,e,f)
+kable(g, caption = "Example", col.names = c("Years:", 2005, 2006,2007, 2008, 2009))
+Year <- tibble(c(2005, 2006, 2007, 2008, 2009))
+Sales <- tibble(c(75.3,74.2,78.5,79.7,80.2))
+yrs <- bind_cols(Year, Sales)
+```
+
+## Time-Series Plot   
+
+- A time-series plot is a two-dimensional plot of time series data   
+    - the vertical axis measures the variable of interest  
+- the horizontal axis corresponds to the time periods
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(yrs, aes(x=Year, y=Sales)) + geom_line() +ylim(60, 90) + ggtitle("Time Series Data") + geom_point() + theme_tufte() + geom_rug()
+```
+
+
+## Time-Series Components  
+
+- Trend Component  
+    - Overall, persistent, long-term movement   
+- Seasonal Component     
+    - Regular periodic fluctuations, usually within a 12-month period  
+
+- Cyclical Component  
+    - Repeating swings or movements over more than one year
+- Irregular Component   
+    - Repeating swings or movements over more than one year  
+Erratic or residual fluctuations
+
+## Trend Component  
+
+- Long-run increase or decrease over time (overall upward or downward movement)  
+- Data taken over a long period of time  
+- Trend can be upward or downward  
+- Trend can be linear or non-linear  
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+Time <- tibble(c(2005,2006, 2007, 2008,2009,2010))
+Sales <- tibble(c(50, 70,60,75,65,80))
+a <- bind_cols(Time, Sales)
+
+ggplot(a, aes(x=Time, y=Sales)) + geom_line() + geom_point() + geom_smooth(method = "lm", se=FALSE) + theme_tufte() + geom_rug()
+
+```
+
+## Seasonal Component
+
+- Short-term regular wave-like patterns   
+- Observed within 1 year   
+- Often monthly or quarterly
+Sales  
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+Time <- tibble((c("01Q4", "02Q1", "02Q2", "02Q3", "02Q4", "03Q1", "03Q2", "03Q3", "03Q4")))
+Sales <- tibble(c(50.1,65.1,60.1,70.1,62.1,75.1,68.1,77.1,70.1))
+a <- bind_cols(Time, Sales)
+colnames(a) <- c("Time", "Sales")
+a$Time <- factor(a$Time)
+ggplot(a, aes(x=Time, y=Sales)) + geom_line() + geom_point() + theme_tufte() + geom_rug()
+```
+
+## Cyclical Component
+
+- Long-term wave-like patterns  
+- Regularly occur but may vary in length  
+- Often measured peak to peak or trough to trough  
+
+## Irregular Component  
+
+- Unpredictable, random, “residual” fluctuations  
+- Due to random variations of Nature  
+- Accidents or unusual events  
+- “Noise” in the time series  
+
+## Does Your Time Series Have A Trend Component?
+
+
+- A time-series plot should help you to answer this question.  
+
+- Often it helps if you “smooth” the time-series data to help answer this question.  
+
+
+- Two popular smoothing methods are moving averages and exponential smoothing.
+
+## Smoothing Methods
+
+- Moving Averages  
+    - Calculate moving averages to get an overall impression of the pattern of movement over time  
+    - Averages of consecutive time-series values for a chosen period of length L.  
+
+
+- Exponential Smoothing   
+    - A weighted moving average
+
+## Moving Averages  
+
+- Used for smoothing  
+- A series of arithmetic means over time  
+- Result dependent upon choice of L (length of period for computing means)  
+- Last moving average of length L can be extrapolated one period into future for a short term forecast  
+- Examples:    
+    - For a 5 year moving average, L = 5  
+    - For a 7 year moving average, L = 7  
+    - Etc.  
+    
+- Example: Five-year moving average 
+
+    - First average: $MA(5)=\frac{Y_1+Y_2+Y_3+Y_4+Y_5}{5}$
+
+
+
+
+
+
+    - Second average:$MA(5)=\frac{Y_2+Y_3+Y_4+Y_5+Y_6}{5}$
+
+    - etc.
+- The 5-year moving average smoothes the data and makes it easier to see the underlying trend   
+
+## Exponential Smoothing  
+
+- Used for smoothing and short term forecasting (one period into the future)  
+
+
+- A weighted moving average  
+    - Weights decline exponentially  
+    - Most recent observation is given the highest weight   
+    
+    
+
+
+
+- The weight (smoothing coefficient) is W  
+    - Subjectively chosen  
+    - Ranges from 0 to 1  
+    - Smaller W gives more smoothing, larger W gives less smoothing  
+- The weight is:  
+    - Close to 0 for smoothing out unwanted cyclical and irregular components  
+    - Close to 1 for forecasting  
+
+## Exponential Smoothing Model
+
+
+
+- $E_1=Y_1$  
+- $E_i=WE_i+ (1-W)E_{i-1}$ 
+  For i = 2, 3, 4, …
+  where:
+	$Ei$ = exponentially smoothed value for period i  
+	$E_{i-1}$ = exponentially smoothed value already
+		 computed for period i - 1  
+	 $Y_i$ = observed value in period i  
+	 W = weight (smoothing coefficient), 0 < W < 1  
+	 
+ ![](images\Expo_smooth.png)
+
+## Forecasting Time Period i + 1  
+
+   The smoothed value in the current period (i) is used as the forecast value for next period (i + 1) :  
+- $\hat{Y_{i+1}}= E_i$
+
+
+## There Are Three Popular Methods For Trend-Based Forecasting
+
+- Linear Trends   
+    - Linear Trend Model  
+
+- Non Linear Trends   
+    - Quadratic Trend Model   
+    - Exponential Trend Forecasting   
+
+
+## Linear Trend Forecasting  
+
+Estimate a trend line using regression analysis
+Use time (X) as the independent variable:  
+
+  - $\hat{Y}=b_0+b_1X$
+
+In least squares linear, non-linear, and
+exponential modeling, time periods are
+numbered starting with 0 and increasing
+by 1 for each time period.
+
+## Nonlinear Trend Forecasting   
+
+- A nonlinear regression model can be used when the time series exhibits a nonlinear trend  
+
+
+- Compare adj. $r^2$ and standard error to that of linear model to see if this is an improvement
+
+
+
+## Choosing A Forecasting Model
+
+- Perform a residual analysis   
+    - Eliminate a model that shows a pattern or trend   
+- Measure magnitude of residual error using squared differences and select the model with the smallest value  
+- Measure magnitude of residual error using absolute differences and select the model with the smallest value  
+- Use simplest model  
+    - Principle of parsimony  
+    
+## Principal of Parsimony  
+
+- Suppose two or more models provide a good fit for the data   
+- Select the simplest model   
+
+## Pitfalls in Time-Series Analysis   
+
+- Assuming the mechanism that governs the time series behavior in the past will still hold in the future   
+- Using mechanical extrapolation of the trend to forecast the future without considering personal judgments, business experiences, changing technologies, and habits, etc.  
+
+
+
+
+
