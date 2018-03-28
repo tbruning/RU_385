@@ -1,0 +1,317 @@
+---
+title: "Multiple Regression"
+subtitle: "An implementation in R Markdown"
+author: "Tom Bruning"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+library(tufte)
+require(dplyr)
+require(tidyr)
+require(ggplot2)
+require(ggthemes)
+require(knitr)
+require(tibble)
+
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
+options(htmltools.dir.version = FALSE)
+```
+
+# Multiple Regression  
+
+In this chapter, you learn: 
+
+* How to develop a multiple regression model  
+* How to interpret the regression coefficients  
+* How to determine which independent variables to include in the regression model  
+* How to determine which independent variables are most important in * predicting a dependent variable  
+* How to use categorical independent variables in a regression model  
+* How to predict a categorical dependent variable using logistic regression   
+* How to identify individual observations that may be unduly influencing the multiple regression model  
+
+## The Multiple Regression Model
+
+Idea: Examine the linear relationship between 
+1 dependent (Y) & 2 or more independent variables (Xi)  
+Multiple Regression Model with k Independent Variables:
+\begin{equation}
+   Y_i = \beta_0 + \beta_1 X_{1i} + \beta_2 X_{2i} + ... +\beta_k X_{ki}
+\end{equation}
+
+## Multiple Regression Equation  
+The coefficients of the multiple regression model are estimated using sample data   
+Multiple regression equation with k independent variables:  
+
+\begin{equation}
+  \hat Y_i = b_0 + b_1 X_{1i} + b_2 X_{2i} + ... + b_k X_{ki}
+\end{equation}
+
+Where:  
+
+
+* $\hat Y_i$ = Estimated or predicted value of Y  
+* $b_0$ = Y intercept  
+* $b_1, b_2, b_k$ = slope coefficients
+
+## Example: 2 Independent Variables
+
+A distributor of frozen dessert pies wants to evaluate factors thought to influence demand
+
+Dependent variable:    
+
+* Pie sales (units per week)  
+Independent variables:  
+
+* Price (in $)     
+* Advertising ($100’s)
+Data are collected for 15 weeks
+
+
+```{r, echo=FALSE}
+a <- tibble(sales=c(350,460,350,430,350,380,430,470,450,490,340,300,440,450,300))
+b <- tibble(price=c(5.5,7.5,8.0,8.0,6.8,7.5,4.5,6.4,7.0,5.0,7.2,7.9,5.9,5.0,7.0))
+c <- tibble(ads=c(3.3,3.3,3.0,4.5,3.0,4.0,3.0,3.7,3.5,4.0,3.5,3.2,4.0,3.5,2.7))
+d <- bind_cols(a,b,c)
+kable(d, col.names = c("Pie Sales", "Price", "Advertising (000"))
+```
+
+## Excel Multiple Regression Output
+
+ ![](images\excel2.png)
+
+## The Multiple Regression Equation
+
+
+\begin{equation}
+  \hat{Sales}=306.525 -24.975(Price) + 74.131(Advertising)
+\end{equation}
+where:  
+
+* Sales is in number of pies per week  
+* Price is in \$  
+* Advertising is in \$100’s.
+
+$b_1 = -24.975$ : sales will decrease, on average, by 24.975 pies per week for each \$1 increase in selling price, net of the effects of changes due to advertising.  
+$b_2 = 74.131$: sales will increase, on average, by 74.131 pies per week for each \$100 increase in advertising, net of the effects of changes due to price.   
+
+## Using The Equation to Make Predictions 
+Predict sales for a week in which the selling price is \$5.50 and advertising is \$350:
+\begin{equation}
+  \hat{Sales}=306.525 -24.975(5.50) + 74.131(3.5) = 428.62
+\end{equation}
+
+Note that Advertising is in \$100s, so \$350 means that $X_2 = 3.5$  
+Predicted sales is 428.62 pies
+
+## The Coefficient of Multiple Determination, $r^2$
+
+Reports the proportion of total variation in Y explained by all X variables taken together.
+\begin{equation}
+ r^2 = \frac{SSR}{SST} = \frac{regression\ sum\ of\ squares }{total\ sum\ of\ squares}
+ \end{equation}
+ 
+## Adjusted $r^2$
+
+* $r^2$  never decreases when a new  X  variable is added to the model  
+    * This can be a disadvantage when comparing models  
+* What is the net effect of adding a new variable?  
+    * We lose a degree of freedom when a new  X variable is added  
+    * Did the new  X  variable add enough explanatory power to offset the loss of one degree of freedom?  
+
+
+$r^2$ shows the proportion of variation in Y explained by all X variables adjusted for the number of X variables used
+
+
+\begin{equation}
+  R^2_{adj} = 1 - [(1-r^2)(\frac{n-1}{n-k-1})]
+\end{equation}
+
+  (where n = sample size, k = number of independent variables)
+
+Penalizes excessive use of unimportant independent variables  
+Smaller than r2  
+Useful in comparing among models   
+
+
+## Using Dummy Variables  
+
+* A dummy variable is a categorical independent variable with two levels:
+
+    * yes or no, on or off, male or female  
+    * coded as 0 or 1  
+    
+* Assumes the slopes associated with numerical independent variables do not change with the value for the categorical variable  
+* If more than two levels, the number of dummy variables needed is (number of levels - 1)
+
+## Dummy-Variable Example (with 2 Levels)
+
+\begin{equation}
+  \hat Y = b_0 + b_1X_1 + b_2X_2
+\end{equation}
+
+
+Let:  
+$Y$  = pie sales  
+$X_1$ = price  
+$X_2$ = holiday  ($X_2 = 1$ if a holiday occurred during the week) 		   ($X_2 = 0$ if there was no holiday that week)
+
+ No Holiday  
+
+ \begin{equation}
+  \hat Y = b_0 + b_1X_1 + b_2(0) = b_0 + b_1X_1
+\end{equation}
+
+
+ Holiday  
+
+ \begin{equation}
+  \hat Y = b_0 + b_1X_1 + b_2(1) = b_0 + b_2 + b_1X_1
+\end{equation}
+
+## Interpreting the Dummy Variable Coefficient (with 2 Levels)
+
+Example:
+
+ \begin{equation}
+  \hat {Sales} = 300 - 30(Price) + 15(Holiday) 
+\end{equation}
+
+
+Sales: number of pies sold per week
+Price:  pie price in $
+
+Holiday:  
+1  If a holiday occurred during the week  
+0  If no holiday occurred  
+$b_2 = 15$  
+on average, sales were 15 pies greater in weeks with a holiday than in weeks without a holiday, given the same price
+
+## Dummy-Variable Models (more than 2 Levels)  
+
+The number of dummy variables is one less than the number of levels  
+
+Example:  
+
+* Y = house price ;  
+* $X_1$ = square feet
+
+* If style of the house is also thought to matter:  
+    * Style = ranch,  split level,  colonial
+
+Three levels, so two dummy variables are needed.
+
+Example: Let “colonial” be the default category, and let X2 and X3 be used for the other two categories:  
+
+$Y$ = house price  
+$X_1$ = square feet  
+$X_2  = 1$ if ranch, 0 otherwise  
+$X_3  = 1$ if split level, 0 otherwise  
+
+The multiple regression equation is:
+\begin{equation}
+  \hat Y = b_0 + b_1X_1 + b_2X_2 + b_3X_3
+\end{equation}
+
+## Interpreting the Dummy Variable Coefficients (with 3 Levels)
+
+Consider the regression equation:
+\begin{equation}
+  \hat Y = 20.43 + 0.045(X_1) + 23.53(X_2) + 18.84(X_3)
+\end{equation}
+
+* For a colonial: $X_2 = X_3 = 0$  
+\begin{equation}
+  \hat Y = 20.43 + 0.045(X_1)
+\end{equation}
+
+* For a ranch: $X_2 = 1; X_3 = 0$
+\begin{equation}
+  \hat Y = 20.43 + 0.045(X_1) + 23.53
+\end{equation}
+With the same square feet, a ranch will have an estimated average price of 23.53 thousand dollars more than a colonial.  
+
+* For a split level: $X_2 = 0; X_3 = 1$
+\begin{equation}
+  \hat Y = 20.43 + 0.045(X_1) +  18.84
+\end{equation}
+
+With the same square feet, a split-level will have an estimated average price of 18.84 thousand dollars more than a colonial.
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+a <- tibble(c(245,312,279,308,199,219,405,324,319,255))
+colnames(a) <- "a"
+a1 <- tibble(a$a +100)
+a2 <- tibble(a$a + 50)
+colnames(a1) <- "a"
+colnames(a2) <- "a"
+a4 <- bind_rows(a, a1, a2)
+a <- a4
+b <- tibble(c(1400,1600,1700,1875,1100,1550,2350,2450,1425,1700))
+b <- bind_rows(b,b,b)
+
+
+e <- tibble(as.factor(c(rep("Col",10),rep("SL",10),rep("Ran",10))))
+c <- tibble(as.factor(c(rep(1,10), rep(0,20))))
+g <- tibble(as.factor(c(rep(0,10),rep(1,10),rep(0,10))))
+d <- bind_cols(e,a,b,c,g)
+colnames(d) <- c("style","price", "sqft", "Col", "SL")
+kable(d, col.names = c("Style","House Price in $1000s (Y)", "Square Feet (X)","Col", "SL"),caption = "Housing Data")
+lm2 <- lm(d$price ~ d$sqft )
+summary(lm2)
+
+lm2 <- lm(d$price ~ d$sqft + d$style )
+summary(lm2)
+
+lm2 <- lm(d$price ~ d$sqft + d$Col + d$SL)
+summary(lm2)
+
+ggplot(d, (aes(x=sqft, y=price))) + geom_point() + xlab("Square Feet") + ylab("House Price ($1,000") + theme_tufte() +
+  stat_smooth(method = "lm",se=FALSE, aes( group = d$style, color = d$style )) +xlim(0,3000) +ylim(0,550)
+```
+
+
+
+
+
+
+## Logistic Regression
+
+* Used when the dependent variable Y is binary (i.e., Y takes on only two values)  
+
+* Examples 
+    * Customer prefers Brand A or Brand B  
+    * Employee chooses to work full-time or part-time  
+    * Loan is delinquent or is not delinquent  
+    * Person voted in last election or did not  
+* Logistic regression allows you to predict the probability of a particular categorical response  
+
+* Logistic regression is based on the odds ratio, which represents the probability of an event of interest compared with the probability of not an event of interest
+
+\begin{equation}
+  Odds\ Ratio = \frac{probability\ of\ an\ event\ of\ interest}{1-probability\ of\ an\ event\ of\ interest}
+\end{equation}
+
+
+* The logistic regression model is based on the natural log of this odds ratio
+
+* Logistic Regression Model
+\begin{equation}
+   ln(odds\ ratio) = \beta_0 + \beta_1 X_{1i} + \beta_2 X_{2i} + ... +\beta_k X_{ki} + e_i
+\end{equation}
+
+* Logistic Regression Equation
+\begin{equation}
+  ln(odds\ ratio) = b_0 + b_1 X_{1i} + b_2 X_{2i} + ... + b_k X_{ki}
+\end{equation}
+
+
