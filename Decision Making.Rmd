@@ -1,0 +1,212 @@
+---
+title: "Decision Making"
+subtitle: ""
+author: "Tom Bruning"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+
+---
+
+```{r setup, include=FALSE}
+library(tufte)
+library(knitr)
+library(tibble)
+library(tidyr)
+library(dplyr)
+
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
+options(htmltools.dir.version = FALSE)
+```
+
+# Steps in Decision Making  
+
+* List Alternative Courses of Action   
+    * Choices or actions  
+* List Uncertain Events  
+    * Possible events or outcomes  
+* Determine ‘Payoffs’  
+    * Associate a Payoff with Each Choice/Event combination  
+* Adopt Decision Criteria  
+    * Evaluate Criteria for Selecting the Best Course of Action  
+    
+## A Payoff Table  
+A payoff table shows alternatives, states of nature, and payoffs
+
+```{r, echo=FALSE}
+
+a <- tibble(c("Strong Economy", "Stable Economy", "Weak Economy"))
+b <- tibble(c(200, 50, -120))
+c <- tibble(c(90, 120, -30))
+d <- tibble(c(40, 30, 20))
+e <- bind_cols(a,b,c,d)
+kable(e, col.names = c("States of Nature", "Large Factory", "Average Factory", "Small Factory"), caption = "Payoff Table \nProfit in $1000s")
+```
+
+## Opportunity Loss  
+Opportunity loss is the difference between an actual payoff for an action and the highest possible payoff, given a particular event
+
+The action “Average factory” has payoff 90 for “Strong Economy”.  Given “Strong Economy”, the choice of “Large factory” would have given a payoff of 200, or 110 higher.  *Opportunity loss = 110 for this cell.*
+
+```{r, echo=FALSE}
+
+a <- tibble(c("Strong Economy", "Stable Economy", "Weak Economy"))
+b <- tibble(c(0, 70, 140))
+c <- tibble(c(110, 0, 50))
+d <- tibble(c(160, 90, 0))
+e <- bind_cols(a,b,c,d)
+kable(e, col.names = c("States of Nature", "Large Factory", "Average Factory", "Small Factory"), caption = "Opportunity Loss Table Opportunity Loss in $1000s")
+```
+
+## Decision Criteria  
+
+* Maximax  
+    * An optimistic decision criteria  
+* Maximin  
+    * A pessimistic decision criteria  
+* Expected Monetary Value (EMV(j))   
+    * The expected profit for taking action j  
+* Expected Opportunity Loss (EOL(j))  
+    * The expected opportunity loss for taking action j  
+* Expected Value of Perfect Information (EVPI)  
+    * The expected opportunity loss from the best decision  
+* Return to Bayes
+
+## Maximax Solution
+
+* Maximum payoff for **Large Factory** is 200  
+* Maximum payoff for **Average Factory** is 120  
+* Maximum payoff for **Small Factory** is 40  
+
+Maximax Decision:  Build the Large Factory because 200 is the maximum  
+## Maximin Solution  
+
+* Minimum payoff for **Large Factory** is -120  
+* Minimum payoff for **Average Factory** is -30  
+* Minimum payoff for **Small Factory* is 20  
+
+Maximin Decision:  Build the Small Factory because 20 is the maximum
+
+## Expected Monetary Value Solution 
+
+Goal:  Maximize expected value  
+The expected monetary value is the weighted average payoff, given specified probabilities for each event.  
+\begin{equation}
+  EMV_j = \sum_{i=1}^N x_{ij} P(X=x_i)
+\end{equation}
+Where:  
+  $EMV_j$ = expected monetary value of action j  
+	$x_{ij}$ = payoff for action j when event i occurs  
+  $P_i$ = probability of event i    
+
+```{r, echo=FALSE}
+
+a <- tibble(c("Strong Economy(.3)", "Stable Economy(.5)", "Weak Economy(.2)", "EMV"))
+b <- tibble(c(200, 500, -120, 61))
+c <- tibble(c(90, 120, -30, 81))
+d <- tibble(c(40, 30, 20, 31))
+e <- bind_cols(a,b,c,d)
+kable(e, col.names = c("States of Nature", "Large Factory", "Average Factory", "Small Factory"), caption = "Payoff Table \nProfit in $1000s")
+```
+
+Example:  
+EMV (Average factory) =   (90)(.3) + (120)(.5) + (-30)(.2) =  81 
+
+Maximize expected value by choosing **Average factory**  
+
+## Expected Opportunity Loss Solution  
+
+Goal:  Minimize expected opportunity loss
+The expected opportunity loss is the weighted average loss, given specified probabilities for each event
+\begin{equation}
+  EOL_j = \sum_{i=1}^N Lx_{ij} P(X=x_i)
+\end{equation}
+Where:       
+    $EOL_j$ = expected opportunity loss of action j  
+    $L_{ij}$ = opportunity loss for action j when event i occurs  
+    $P_i$ = probability of event i  
+
+## Expected Opportunity Loss Solution
+Goal:  Minimize expected opportunity loss
+
+```{r, echo=FALSE}
+
+a <- tibble(c("Strong Economy(.3)", "Stable Economy(.5)", "Weak Economy(.2", "EOL"))
+b <- tibble(c(0, 70, 140, 63))
+c <- tibble(c(110, 0, 50,43))
+d <- tibble(c(160, 90, 0, 93))
+e <- bind_cols(a,b,c,d)
+kable(e, col.names = c("States of Nature", "Large Factory", "Average Factory", "Small Factory"), caption = "Opportunity Loss Table Opportunity Loss in $1000s")
+```
+
+Example:
+EOL (Large factory) = 0(.3) + 70(.5) + (140)(.2) = 63
+Minimize expected op. loss by choosing **Average factory** 
+
+## Expected Opportunity Loss vs. Expected Monetary Value  
+
+* The Expected Monetary Value (EMV) and the Expected Opportunity Loss (EOL) criteria are equivalent.  
+
+* Note that in this example the expected monetary value solution and the expected opportunity loss solution both led to the choice of the average size factory.  
+
+## Value of Information 
+
+Expected Value of Perfect Information, EVPI  
+
+
+**EVPI** = Expected profit under certainty	– expected monetary value of the best alternative  
+
+(EVPI is equal to the expected opportunity loss from the best decision)
+
+
+## Expected Profit Under Certainty
+Expected profit under certainty = expected value of the best decision, *given perfect information*
+
+Examples:   
+
+* Best decision given “Strong Economy” is “Large factory” (200)
+* Best decision given "Stable Economy"" is "Average factory" (120)
+* Best decision given "Weak Economy" is "Small factory" (20)  
+
+Now weight these outcomes with their probabilities to find the expected value.  
+200(.3)+120(.5)+20(.2) = 124, which is the expected profit under certainty
+
+## Value of Information Solution (EVPI) 
+
+EVPI = Expected profit under certainty – Expected monetary value of the best decision  
+Recall:      
+
+* Expected profit under certainty = 124  
+* EMV is maximized by choosing “Average factory”, where EMV = 81  
+	  
+so: 
+* EVPI 	=  124 – 81 	=  43  
+(EVPI is the maximum you would be willing to spend to obtain perfect information)
+
+## Forecasting (accounting for randomness)
+
+Suppose you are a district manager for a retail chain.  You have three stores in your district that have averaged the same store sales over the past three years of $10,000,000.  You know (from taking this class) that there is are random factors that are reflected in these averages. 
+The store's past year sales were \$10,500,000, \$9,500,000, and \$10,000,000.
+Your regional manager demands a 10% increase in sales from your district for the following year.  How best to allocate that $3,000,000 increase?
+
+Since tha stores have the same average sales (for the past 3 years) you could increase their quota by $1,000,000. You could increase each store sales by 10%, or you could take randomness into account and factor that randomness into the new quotas.  
+The following table summarizes these options.
+
+```{r, echo=FALSE}
+
+a <- tibble(c("3 yr. Average Sales", "Last Year Sales", "10% increase", "10% increase w/randomness"))
+b <- tibble(c("$30,000,000","$30,000,000","$30,000,000","$30,000,000"))
+c <- tibble(c("$10,000,000","$10,500,000","$11,550,000","$11,275,000"))
+d <- tibble(c("$10,000,000","$9,500,000","$10,450,000","$10,725,000"))
+e <- tibble(c("$10,000,000","$10,000,000","$11,000,000","$11,000,000"))
+f <- bind_cols(a,b,c,d,e)
+kable(f, col.names = c(" ", "District", "Store 1", "Store 2", "Store 3"), caption = "Summary")
+```
+  
+
