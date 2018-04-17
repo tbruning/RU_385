@@ -1,0 +1,202 @@
+---
+title: "Non-Parametric Statistics"
+subtitle: "An implementation in R Markdown"
+author: "Tom Bruning"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+library(tufte)
+require(dplyr)
+require(tidyr)
+require(ggplot2)
+require(ggthemes)
+require(knitr)
+require(tibble)
+
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
+options(htmltools.dir.version = FALSE)
+```
+
+# Non-parametric Statistics
+
+## Introduction  
+
+**Parametric statistics** describe procedures that assume that the population from which the sample is drawn follows a known probability distribution  
+
+- Parametric statistics require the level of data measurement to be interval or ratio  
+
+Parametric procedures were used to form confidence intervals and test hypotheses we have previously studied.  
+
+**Nonparametric statistics** rely on fewer assumptions about the population probability distribution   
+
+- Used for nominal or ordinal level data  
+- Used when the sample size is very small (less than 30) because it is difficult to test if the population is normally distributed   
+- Used when there is no corresponding parametric procedure for the hypothesis test  
+
+All else equal (the same sample size, same level of significance, and so on), a parametric procedure will result in a higher probability of correctly rejecting a null hypothesis  
+
+## The Sign Test     
+
+The sign test is a very versatile nonparametric procedure that can be used to estimate a population median
+
+The sign test assigns a plus sign or a minus sign to each observation in a sample  
+
+- the test statistic is the number of plus or minus signs from the sample   
+
+## Using a One-Tail Sign Test for the Median (Small Sample Case)
+
+The small sample case is used when n $\le$ 20   
+Example: United Medical wants to see if the number of steps walked per day by its population of employees is less than 6,000  
+
+- Data were collected from a random sample of ten employees  
+
+```{r, echo = FALSE, fig.margin=TRUE}
+a <- tibble(a=c(2890,5799))
+b <- tibble(c(3760,4649))
+c <- tibble(c(5217,15758))
+d <- tibble(c(9736,4127))
+e <- tibble(c(6000,5105))
+
+
+i <- bind_cols(a,b,c,d,e)
+kable(i, col.names = c(" ", " ", " ", " ", " "),caption = "Randon Sample of Number of step taken per day")
+
+```
+
+- **Step 1:** Identify the null and alternative hypotheses  
+    - $H_0$: Median $\ge$ 6,000 steps  
+    - $H_1$: Median < 6,000 steps  
+Suppose that $\alpha$ = 0.10 is chosen for this test 
+		
+		
+- **Step 2:** Count the plus and minus signs  
+
+    - assign a plus sign to any data value above the hypothesized median (6,000) and a negative sign to any data value below the median  
+    - If any value happens to fall exactly on the median, remove it from the  sample
+
+
+```{r, echo = FALSE, fig.margin=TRUE}
+a <- tibble(a=c("2890(-)","5799(-)"))
+b <- tibble(c("3760(-)","4649(-)"))
+c <- tibble(c("5217(-)","15758(+)"))
+d <- tibble(c("9736(+)","4127(-)"))
+e <- tibble(c("6000( )","5105(-)"))
+
+
+i <- bind_cols(a,b,c,d,e)
+kable(i, col.names = c(" ", " ", " ", " ", " "),caption = "Randon Sample of Number of step taken per day")
+
+```
+
+There are two plus signs and seven minus signs  
+
+- **Step 3:** Determine the test statistic, S  
+
+    - The test statistic for the one-tail sign test, S, is the number of plus signs or minus signs, depending on the alternative hypothesis     
+    - Because this alternative hypothesis is that the median is less than 6,000 steps per day, the test statistic is the number of minus signs  
+    - Therefore S = 7  
+    
+
+- **Step 4:** Determine the sample size, n  
+
+    - The sample size is the total number of plus signs and minus signs  
+    -  here, n = 7 + 2 = 9  
+    
+- **Step 5:** Determine the p-value  
+
+    - If the null hypothesis is true the probability that an observation is assigned a plus sign (above the median of 6,000) equals 0.50  
+    - The same can be said for the probability that the observation is assigned a minus sign   
+    - This sampling distribution can be said to follow the binomial probability distribution with p = 0.50  
+    - Find the binomial probabilities for all possible values of x (the number of minus signs) when p = 0.50 and n = 9  
+    - In our sample of nine observations, seven were below the hypothesized median of 6,000 steps per day.   
+    - The p-value for this hypothesis test represents the probability of observing seven or more observations below the median if the null hypothesis is true  
+
+
+```{r, echo = FALSE, fig.margin=TRUE}
+a <- tibble(a=c(0,1,2,3,4,5,6,7,8,9))
+b <- tibble(c(0.0020,0.0176,0.0703,0.1641,0.2461,0.2461,0.1641,0.0703,0.0176,0.0020))
+i <- bind_cols(a,b)
+kable(i, col.names = c("Number of minus signs. x", "Probability"),caption = "Binomial Probability Distribution when p = 0.50 and n = 9")
+```
+
+
+    
+\begin{equation}
+p-value = P(x \ge S)
+\end{equation}
+\begin{equation}
+P(x ≥ 7) = 0.0703 + 0.0176 + 0.0020 = 0.0899
+\end{equation}
+
+- **Step 6:**  State the conclusion
+
+Because the p-value (0.0899) is less than $\alpha$ = 0.10, United Medical can reject the null hypothesis and conclude that the median number of steps walked per day by the population of employees is less than 6,000  
+
+- Decision Rule for hypotheses tests using p-values  
+    p-value $\ge \alpha \rightarrow$ Do not reject $H_0$  
+    p-value < $\alpha \rightarrow$ Reject $H_0$  
+
+##Using the Sign Test to Determine Preferences  
+
+- The sign test can be applied to tests of whether consumers prefer one product or service to another  
+- In this application, the data values are the brand names consumers prefer when faced with two choices  
+- Because the data (brand names) are merely labels, the level of measurement is nominal
+
+
+**Example:**  Brand preference data (n = 14)  
+
+Do more people prefer Cheez-It brand?
+
+```{r, echo = FALSE, fig.margin=TRUE}
+a <- tibble(a=c(1,2,3,4,5,6,7))
+b <- tibble(b=c("Cheez-It","Cheez-It","Cheez-It","Cheez-It","Cheese Nips","Cheez-It","Cheez-It"))
+c <- tibble(c=c("+","+","+","+","-","+","+"))
+d <- tibble(d=c(8,9,10,11,12,13,14))
+e <- tibble(e=c("No Preference","Cheez-It","Cheese Nips","Cheez-It","Cheez-It","Cheez-It","Cheez-It"))
+f <- tibble(f=c(" ","+","-","+","+","+","+"))
+i <- bind_cols(a,b,c,d,e,f)
+kable(i, col.names = c("Person", "Preference", "Sign","Person", "Preference", "Sign"),caption = "Sample Results for Cheez-Its vs. Cheese Nips")
+```
+
+**Step 1:** Identify the null and alternative hypotheses 
+- $H_0: p \le 0.50$	    (a majority of the population does not favor Cheez-It)  
+- $H_0: p > 0.50$     (a majority of the population does favor Cheez-It)  
+		Suppose that $alpha$ = 0.05 is chosen for this test  
+**Step 2:** Count the plus and minus signs  
+
+- For this sample, we have 11 plus signs and 2 minus signs  
+**Step 3:** Determine the test statistic, S  
+We want to support that the preferred brand is Cheez-It, those choosing Cheez-Its were assigned a plus sign. So, S = 11  
+**Step 4:** Determine the sample size, n  
+n = the total number of plus signs and minus signs, n = 11 + 2 = 13  
+
+  
+**Step 5:** Determine the p-value
+The p-value is found using the binomial probabilities for p = 0.50 and n = 13
+
+
+```{r, echo = FALSE, fig.margin=TRUE}
+a <- tibble(a=c(0,1,2,3,4,5,6))
+b <- tibble(b=c(0.0001,0.0016, 0.0095, 0.0349,0.0873,0.1571,0.2095))
+c <- tibble(c=c(7,8,9,10,11,12,13))
+d <- tibble(d=c(0.0295, 0.1571, 0.0873, 0.0349, 0.0095, 0.0016, 0.0001))
+i <- bind_cols(a,b,c,d)
+kable(i, col.names = c("Number of plus signs. x", "Probability","Number of plus signs. x", "Probability"),caption = "Binomial Probability Distribution when p = 0.50 and n = 13")
+```
+
+p-value = $P(x \ge S) = P(x \ge 11) = 0.0095 + 0.0016 + 0,0001 = 0.0112$   
+
+**Step 6:**  State the conclusion  
+
+Because the p-value (0.0112) is less than $\alpha$ = 0.05, we reject the null hypothesis and conclude that the majority of people prefer Cheez-Its.
+
+
