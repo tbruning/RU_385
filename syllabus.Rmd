@@ -1,7 +1,7 @@
 ---
 title: "Stat Meth Business  (33:136:385)"
 author: "Tom Bruning"
-date: "January 10, 2018"
+date: "Sept 4, 2018"
 output: pdf_document
 ---
 
@@ -61,7 +61,7 @@ Schedule TBD
 
 ## Topic Schedule
 ```{r grade1, echo=FALSE}
-syllabus <- read.csv("./235_Syllabus.csv")
+syllabus <- read.csv("./385_Syllabus.csv")
 knitr::kable(syllabus, caption = "Tentative Topics and Dates")  
 ```
 
