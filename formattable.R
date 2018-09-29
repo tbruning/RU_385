@@ -1,0 +1,10 @@
+library(data.table)
+library(dplyr)
+library(formattable)
+library(tidyr)
+library(kableExtra)
+library(knitr)
+dt <- mtcars[1:5, 1:6]
+kable(dt)
+kable(dt, booktabs = T)
+kable(dt, "latex", booktabs = T)

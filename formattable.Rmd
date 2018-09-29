@@ -1,0 +1,54 @@
+---
+title: "Statistical Methods for Decision Making"
+subtitle: "Week I"
+author: "Tom Bruning"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+
+---
+
+```{r setup, include=FALSE}
+library(tufte)
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
+options(htmltools.dir.version = FALSE, knitr.table.format = "latex")
+
+```
+
+# Introduction   
+
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE}
+library(knitr)
+library(ggplot2)
+library(datasauRus)
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(formattable)
+library(kableExtra)
+library(rmarkdown)
+dt <- mtcars[1:5, 1:6]
+mtcars[1:10, 1:2] %>%
+mutate(
+car = row.names(.),
+# You don't need format = "latex" if you have ever defined options(knitr.table.format)
+mpg = cell_spec(mpg,  color = ifelse(mpg > 20, "red", "blue")),
+cyl = cell_spec(cyl, color = "white", align = "c", angle = 45,
+background = factor(cyl, c(4, 6, 8),
+c("#666666", "#999999", "#BBBBBB")))
+) %>%
+select(car, mpg, cyl) %>%
+kable("latex", escape = F, booktabs = T, linesep = "")
+
+kable(dt, "latex", booktabs = T) %>%
+kable_styling(latex_options = "striped")
+```
+
