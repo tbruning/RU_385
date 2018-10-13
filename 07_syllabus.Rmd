@@ -1,0 +1,117 @@
+---
+title: "Stat Meth Business  (33:136:385:07)"
+author: "Tom Bruning"
+date: "Sept 4, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Instructor
+
+Thomas Bruning   
+email: tom.bruning@gmail.com   
+cell: 201.204.0585  
+Office Hours: by appointment  
+Classes: Tuesday and Thursday; from 3:20 pm to 4:40 pm.  
+Classroom: BRR, Room 4073.  
+
+## Course Objectives
+
+Students will be introduced to basic statistical methods, particularly understanding the concepts of uncertainty and how the understanding of probability is integral to making business decisions. They will be able to design an experiment, analyze observations and make reasonable predictions and decisions about the business
+events.  
+At the conclusion of this course the student will have knowledge of:  
+
+* Sampling distribution and estimation  
+* Confidence Intervals  
+* Hypothesis Testing  
+* Experimental Design  
+* Linear Regression  
+* Multiple Regression  
+* ANOVA  
+* Logistic Regression  
+* Time Series  
+
+
+
+# Resources  
+
+## Textbook:  
+**Title:** *Basic Business Statistics: Concepts and Applications*  
+**Authors:** Berenson, Levine,Krebbel  
+**Publisher:** Pearson  
+14th Edition (2017)
+
+## Computer Resources    
+**Title:** Microsoft Excel, or equivalent  
+**Additional Resources:** Data Analysis plugin  
+
+## Prerequisites  
+
+The following prerequisites are **essential** for successful learning and understanding of this course:    
+* An introductory course in probability and statistics such as 960:285     
+* Basic college algebra   
+* Working knowledge of Excel spreadsheets
+
+## ACADEMIC INTEGRITY  
+
+I do NOT tolerate cheating. Students are responsible for understanding the RU Academic Integrity Policy (https://slwordpress.rutgers.edu/academicintegrity/wp-content/uploads/sites/41/2014/11/AI_Policy_2013.pdf). I will strongly enforce this Policy and pursue all violations. On all examinations and assignments, students must sign the RU Honor Pledge, which states, “On my honor, I have neither received nor given any unauthorized assistance on this examination or assignment.  Don’t let cheating destroy your hard-earned opportunity to learn. See business.rutgers.edu/ai for more details.  
+
+## Course Overview   
+This course will review the basic statistical methods essential for doing business analysis, in particular when outcomes are uncertain and future events are subject to chance variation.  We will study basics of data analysis using computer software.
+
+## Course Web site information and discussion   
+### Blackboard
+All class discussions, assignments, and materials will be posted to Blackboard   
+Please review this site 2-3 times per week for further information.
+
+# Homeworks, Exams, and Grading Policy   
+
+
+## Homework (10% of final grade)  
+
+I will post approximately 10 homework assignments during the semester.  All homework will be completed in Blackboard.  You are responsible for completing the work, on time.  Statistics is not a *spectator sport* , it is a *participatory sport*.  I have it on good authority, (10+ years of teaching statistics experience) if you do not do the work you **will** not understand and succeed in this class.  If you miss two (2) homeworks you will receive an **F** for this class.  This is true regardless of your grades on the other homework assignment and your grades on the midterm and final.
+
+## Midterm (40% of final grade)
+
+The midterm is a full period test that is scheduled during the 7th week of class.
+
+## Final (50% of final grade)
+
+Schedule TBD   
+
+Your final grade is not subject to negotiation. If you feel I have made an error, submit your written argument to me within one week of receiving your final grade. Clarify the precise error I made and provide all due supporting documentation. If I have made an error, I will gladly correct it. But I will adjust grades only if I have made an error. I cannot and will not adjust grades based on consequences, such as hurt pride, lost scholarships, lost tuition reimbursement, lost job opportunities, or dismissals. It is dishonest to attempt to influence faculty in an effort to obtain a grade that you did not earn, and it will not work.]
+
+
+
+
+
+## Topic Schedule
+```{r grade1, echo=FALSE}
+syllabus <- read.csv("./385_Syllabus.csv")
+knitr::kable(syllabus, caption = "Tentative Topics and Dates")  
+```
+
+## Support Services
+
+
+If you need accommodation for a disability, obtain a Letter of Accommodation from the Office of Disability Services. The Office of Disability Services at Rutgers, The State University of New Jersey, provides student-centered and student-inclusive programming in compliance with the Americans with Disabilities Act of 1990, the Americans with Disabilities Act Amendments of 2008, Section 504 of the Rehabilitation Act of 1973, Section 508 of the Rehabilitation Act of 1998, and the New Jersey Law Against Discrimination. https://ods.rutgers.edu  
+
+* If you are in need of mental health services, please use our readily available services.  
+  
+  Rutgers Counseling and Psychological Services – New Brunswick: http://rhscaps.rutgers.edu/  
+  
+* If you are in need of physical health services, please use our readily available services.    
+  
+  Rutgers Health Services – New Brunswick: http://health.rutgers.edu/  
+  
+* If you are in need of legal services, please use our readily available services: http://rusls.rutgers.edu/
+  
+* If you are in need of additional academic assistance, please use our readily available services.  
+  
+  Rutgers University-New Brunswick Learning Center: https://rlc.rutgers.edu/  
+
+
+
